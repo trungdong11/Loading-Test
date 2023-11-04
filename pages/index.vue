@@ -24,7 +24,7 @@
   display: flex;  
 }
 .nuxt-container {
-  margin-top: 72px;
+  margin-top: 73px;
   padding: 20px;
   width: 100%;
 }
