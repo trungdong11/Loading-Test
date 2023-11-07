@@ -34,8 +34,8 @@ export default {
       }
     },
     setupEventSource(sseUrl) {
-      // const source = new EventSource(sseUrl);
-      // console.log(source)
+      const source = new EventSource(sseUrl);
+      console.log(source)
 
       // source.addEventListener('message', event => {
       //     let data = JSON.parse(event.data);
@@ -48,6 +48,11 @@ export default {
       //         console.log(EventSource);
       //     }
       // }, false);
+
+      source.addEventListener = (event) => {
+          this.listHttps.push(JSON.parse(event.data));
+          console.log(this.listHttps);
+        };
     }
 }
 }
