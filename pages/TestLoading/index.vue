@@ -1,10 +1,25 @@
 <template>
   <div>
+    <!-- <div class="container">
+      <form action="" @submit.prevent="getResponseHTTP">
+        <label for="">URL or Ip address</label>
+        <input type="text" placeholder="Enter the url" v-model="urlValue">
+
+        <label for="">Thread quantity</label>
+        <input type="text" placeholder="Enter the thread quantity" v-model="threadValue">
+
+        <label for="">Iteration quantity</label>
+        <input type="text" placeholder="Enter the iteration" v-model="IterationValue">
+
+        <button type="submit">Start test</button>
+      </form>
+    </div> -->
     <button @click="getResponseHTTP">Gửi yêu cầu HTTP</button>
-    <!-- <div>{{ listHttp }}</div> -->
-    <ul> 
-      <li v-for="listHttp in listHttps" :key="listHttp.id">{{listHttp}}</li>
-    </ul>
+    <!-- <div>{{ listHttp }}</div> -->  
+    <p> 
+      <!-- <li v-for="listHttp in listHttps" :key="listHttp.id">{{listHttp}}</li> -->
+      {{ listHttps }}
+    </p> 
   </div>
 </template>
 
@@ -14,49 +29,49 @@ export default {
     return {
       // data: [],
       listHttps: [],
-      url: "103.195.236.45",
-      iterations: 2,
-      threads: 2,
+      urlValue: '',
+      iterationValue: '',
+      threadsValue: '',
+       
     };
   },
   created() {
-    this.getResponseHTTP();
+    // this.getResponseHTTP();
   },
   methods: {
     async getResponseHTTP() {
-      try {
-        const response = await this.$api.httpProtocol.getHttpRequest(this.url, this.iterations, this.threads);
-        const sseUrl = response.data;
-        let result = this.setupEventSource(sseUrl);
-        console.log(result);
-      } catch (error) {
-        console.error(error);
-      }
+      this.$axios({
+        url: 'http://localhost:8081/api/v1/http-methods/get/http/103.195.237.70?threads=2&iterations=2',
+        data: {
+          prompt: 'json data'
+        },
+        headers: {
+          'accept': '*',
+          'content-type': 'application/json'    
+        },
+        method: 'GET',
+        onDownloadProgress: progressEvent => {
+          const xhr = progressEvent?.target
+          // console.log(xhr.response.data)
+          this.listHttps = xhr.response
+          const dataString = xhr.response.split('data:') 
+          console.log(dataString)
+          // const result = JSON.parse(dataString)
+          
+          // console.log(dataString)
+
+          // const{responseText} = xhr;
+          // const dataString = responseText .split(' ');
+          // this.listHttps = dataString
+          // console.log(dataString)
+        }
+      }).then(({ data }) => Promise.resolve(data));
     },
-    setupEventSource(sseUrl) {
-      const source = new EventSource(sseUrl);
-      console.log(source)
-
-      // source.addEventListener('message', event => {
-      //     let data = JSON.parse(event.data);
-      //     this.listHttps = data.listHttps;
-      // }, false);
-
-      // source.addEventListener('error', event => {
-      //     if (event.readyState == EventSource.CLOSED) {
-      //         console.log('Event was closed');
-      //         console.log(EventSource);
-      //     }
-      // }, false);
-
-      source.addEventListener = (event) => {
-          this.listHttps.push(JSON.parse(event.data));
-          console.log(this.listHttps);
-        };
-    }
+    
 }
 }
 </script>
-<style scoped>
+<style scoped lang="scss">
+
 
 </style>

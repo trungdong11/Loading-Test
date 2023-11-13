@@ -14,8 +14,8 @@
   import SideBar from '~/components/Layouts/SideBar.vue';
   export default {
       components: {
-          TopNavBar,
-          SideBar
+          SideBar, 
+          TopNavBar
       },
   }
 </script>
@@ -24,7 +24,7 @@
   display: flex;  
 }
 .nuxt-container {
-  margin-top: 73px;
+  margin-top: 215 px;
   padding: 20px;
   width: 100%;
 }

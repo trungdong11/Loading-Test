@@ -15,18 +15,17 @@
     import SideBar from '~/components/Layouts/SideBar.vue';
     export default {
         components: {
-            TopNavBar,
-            SideBar
+            SideBar,
+            TopNavBar
         },
     }
 </script>
-<style scoped>
+<style scoped lang="css">
 .body-container {
     display: flex;  
 }
 .nuxt-container {
-    margin-top: 72px;
-    padding: 20px;
+    margin-top: 162px;
     width: 100%;
 }
 </style>
