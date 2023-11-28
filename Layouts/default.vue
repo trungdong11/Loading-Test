@@ -2,7 +2,7 @@
     <div>
         <TopNavBar/>
         <div class="body-container">
-            <SideBar />
+            <!-- <SideBar /> -->
             <div class="nuxt-container">
                 <Nuxt />
             </div>
@@ -25,7 +25,7 @@
     display: flex;  
 }
 .nuxt-container {
-    margin-top: 162px;
+    margin-top: 236px;
     width: 100%;
 }
 </style>

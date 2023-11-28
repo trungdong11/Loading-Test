@@ -19,12 +19,32 @@
             <div class="container__result__content">
               <div class="col-2">
                 <ul> 
-                  <li v-for="listHttp in listHttps" :key="listHttp.id">{{listHttp}}</li>
+                  <li v-for="(listHttp, index) in listHttps" :key="index" @click="SelectJSON(listHttp)" :class="{'selected' : selectedJson === listHttp}">{{listHttp}}</li> 
                 </ul> 
               </div>
-              <!-- <div class="col-2">
-
-              </div> -->
+              <div class="col-2">
+                <div class="col__item" v-if="selectedJson?.response_code === '200'">
+                  <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
+                  <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
+                  <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
+                  <p><span>Load time: </span>{{ selectedJson.load_time }}</p>
+                  <p><span>Connect time:  </span>{{ selectedJson.connect_time }}</p>
+                  <p><span>Latency:  </span>{{ selectedJson.latency }}</p>
+                  <p><span>Header size:  </span>{{ selectedJson.header_size }}</p>
+                  <p><span>Body size:  </span>{{ selectedJson.body_size }}</p>
+                  <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
+                  <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
+                  <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
+                  <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p>
+                  <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>
+                </div>
+                <div v-else-if="selectedJson?.response_code !== '200'" class="col__item">
+                  <p><span>Thread Name: </span>{{ selectedJson?.thread_name }}</p>
+                  <p><span>Iterations: </span>{{ selectedJson?.iterations }}</p>
+                  <p><span>Response Message: </span>{{ selectedJson?.response_message }}</p>
+                  <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p>
+                </div>
+              </div>
             </div>
           </div>
           
@@ -43,16 +63,19 @@ export default {
       iterationValue: "",
       threadsValue: "",
       isCheck: false,
+      selectedJson: null,
        
     }
   },
   created() {
     // this.getResponseHTTP();
+    // console.log(this.listHttps, "dong")
+    // this.HandleSum()
   },
   methods: {
     async getResponseHTTP() {
       this.$axios({
-        url: `http://localhost:8081/api/v1/http-methods/get/http/${this.urlValue}?threads=${this.threadsValue}&iterations=${this.iterationValue}`,
+        url: `http://localhost:8080/api/v1/http-methods/get/http/${this.urlValue}?threads=${this.threadsValue}&iterations=${this.iterationValue}`,
         data: {
           prompt: 'json data'
         },
@@ -70,17 +93,26 @@ export default {
           console.log(Arr)
           this.listHttps = Arr;
           this.isCheck = true;
+          this.HandleSum();
         }
       }).then(({ data }) => Promise.resolve(data));
     },
+    HandleSum() {
+      return this.listHttps.forEach((item) => {
+        console.log(item.thread_name, "dong")
+      })
+    },
+    SelectJSON(json) {
+      this.selectedJson = json
+    }
     
-}
+  }
 }
 </script>
 <style scoped lang="scss">
 
 .container {
-  margin: 28px 38px;
+  margin: 28px 108px;
 
   &__item {
     
@@ -142,21 +174,79 @@ export default {
 
       .col-2 {
         column-gap: 24px;
-        //width: 50%;
+        width: 50%;
         padding: 16px;
         border-right: 1px solid #000;
+        max-height: 500px;
+        overflow: auto;
         
         ul {
-          list-style: none;
+          list-style: none;         
+            li {
+              margin: 8px 0;
+              border-bottom: 1px solid #9999;
+              display: -webkit-box;
+              -webkit-box-orient: vertical;
+              overflow: hidden;
+              -webkit-line-clamp: 2;
+              cursor: pointer;
+              
+            }      
+        }
 
-          li {
-            padding: 6px 0;
-            border-bottom: 1px solid #9999;
+        .col__item {
+          
+          p {
+            font-size: 16px;
+            font-weight: 400;
+            line-height: 24px;
+            color: #EE6457;
+
+            span {
+              font-weight: 500;
+              color: #000;
+            }
           }
         }
+      }
+
+      .col-2::-webkit-scrollbar-thumb { 
+        //width: 40px;
+        background-color: transparent;
+        border-radius: 10px;
+        cursor: pointer;
+        -webkit-transition: background-color 1000ms linear;
+        transition: background-color 1000ms linear;
+      }
+
+      .col-2::-webkit-scrollbar-track {
+        background-color: none;
+        cursor: pointer;
+        width: 5px !important;
+      }
+
+      .col-2::-webkit-scrollbar {
+        height: 6px;
+        width: 6px;
+        background-color: none;
+        cursor: pointer;
+        opacity: 0;
+      }
+
+      .col-2:hover::-webkit-scrollbar {
+        opacity: 1;
+        cursor: pointer;
+      }
+
+      .col-2:hover::-webkit-scrollbar-thumb {
+        background-color: #a3aed0;
+        cursor: pointer;
       }
     }
   }
 }
 
+.selected {
+  color: #EE6457;
+}
 </style>

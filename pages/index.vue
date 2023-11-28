@@ -2,7 +2,7 @@
   <div>
       <TopNavBar/>
       <div class="body-container">
-          <SideBar />
+          <!-- <SideBar />  -->
           <div class="nuxt-container">
               <Nuxt />
           </div>
@@ -14,7 +14,7 @@
   import SideBar from '~/components/Layouts/SideBar.vue';
   export default {
       components: {
-          SideBar, 
+          // SideBar, 
           TopNavBar
       },
   }

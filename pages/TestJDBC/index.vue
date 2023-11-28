@@ -68,7 +68,7 @@
     methods: {
       async getResponseHTTP() {
         this.$axios({
-          url: `http://localhost:8081/api/v1/jdbc-request/?databaseUrl=${this.urlDatabase}/wordpress&jdbcDriverClass=${this.jdbcDriverClass}&username=${this.username}&password=${this.password}&sqlStatement=${this.sqlStatement}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
+          url: `http://localhost:8080/api/v1/jdbc-request/?databaseUrl=${this.urlDatabase}/wordpress&jdbcDriverClass=${this.jdbcDriverClass}&username=${this.username}&password=${this.password}&sqlStatement=${this.sqlStatement}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
           data: {
             prompt: 'json data'
           },
