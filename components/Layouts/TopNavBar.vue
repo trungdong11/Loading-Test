@@ -1,25 +1,18 @@
-<template>
+ <template>
     <div class="nav-bar-container">
         <div class="nav-bar-main">
-            <div></div>
-            <div class="nav-bar-item-left">
-                <div class="admin-info">
-                    <img class="nav-bar-avatar" @click="isShowPopupSettings = true"
-                        src="https://cdn1.iconfinder.com/data/icons/avatar-2-2/512/Programmer-512.png" alt="">
-                    <div class="popup-settings-container" v-if="isShowPopupSettings">
-                        <div class="overlay-settings" @click="isShowPopupSettings = false"></div>
-                        <div class="popup-main">
-                            <div class="setting-item">
-                                <!-- <img src="~/assets/svg/changePassword.svg"> -->
-                                <p>Change password</p>
-                            </div>
-                            <div class="setting-item" @click="logout">
-                                <!-- <img src="~/assets/svg/logOut.svg"> -->
-                                <p>Đăng xuất</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+            <div class="container__header">
+                <h2>PBL WebSite Load Test</h2>
+                <!-- <p>Enter a URL to test the page load time, analyze it, and find bottlenecks.</p> -->
+            </div>
+            <div class="container__input">
+              <h4>Select option for test your Website</h4>
+              <select name="LeaveType" class="form-control" v-model="optionSelected" @change="changeOption">
+                <option value="TestLoading" selected>Test Loading</option>
+                <option value="TestJDBC">Test JDBC</option>
+                <option value="3">Apache Jmeter</option>
+                <option value="4">Burp Suite</option>
+              </select>
             </div>
         </div>
     </div>
@@ -29,22 +22,23 @@
 export default {
     data() {
         return {
-            isShowPopupSettings: false
+          optionSelected: null,
         }
     },
+    created() {
+      console.log(this.optionSelected, "dong")
+    },
     methods: {
-    // async logout {
-    //   await this.$auth.logout()
-    //   this.$router.push(`/login`)
-    // ,
+      changeOption() {
+        this.$router.push(`/${this.optionSelected}`);
+      }
   },
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .nav-bar-container {
-    height: 72px;
-    background: #ffffff;
+    background: #000;
     position: fixed;
     top: 0;
     left: 0;
@@ -53,60 +47,58 @@ export default {
     align-items: center;
     justify-content: center;
     box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    color: #ffff;
     z-index: 500;
+    //margin-left: 100px;
+    
 }
 
-.nav-bar-main {
-    display: flex;
-    justify-content: space-between;
-    padding: 0 20px;
+
+.container__header {
+    text-align: center;
+    padding: 36px 0 0 0;
+    color: #ffff;
+    h2{
+      font-size: 42px;
+      font-weight: 500;
+      margin-bottom: 16px;
+    }
+
+    p {
+      font-size: 20px;
+      font-weight: 400;
+    }
+}
+
+.container__input {
+  margin: 24px 0;
+  text-align: center;
+
+  h4 {
+    font-size: 24px;
+    color: #ffff;
+    font-weight: 500;
+    }
+
+  select {
+    height: 42px;
+    border-radius: 8px;
+    margin-top: 16px;
     width: 100%;
-}
-.admin-info {
-    position: relative;
+    padding: 0 18px;
+    font-size: 18px;
+    font-weight: 500;
+    color: #000;
+
+    option {
+      font-size: 16px;
+      color: #000;
+      border-radius: 8px;
+      
+    }
+  }
 }
 
-.nav-bar-avatar {
-    cursor: pointer;
-    height: 30px;
-    width: 30px;
-    border-radius: 50%;
-    object-fit: cover;
-}
 
-.popup-settings-container {
-    position: absolute;
-    right: 0;
-    width: 200px;
-}
-.overlay-settings {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    z-index: 0;
-}
-.popup-main {
-    position: relative;
-    z-index: 1;
-    background: #ffffff;
-    display: flex;
-    flex-direction: column;
-    white-space: nowrap;
-    border-radius: 3px;
-    box-shadow: var(--box-shadow);
-}
-.setting-item {
-    display: flex;
-    align-items: center;
-    padding: 9px 14px;
-    gap: 10px;
-}
-.setting-item:hover {
-    background: var(--hover-bg-color);
-    transition: 0.2s;
-    cursor: pointer;
-}
+</style> 
 
-</style>
