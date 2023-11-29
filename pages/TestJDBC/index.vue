@@ -5,7 +5,6 @@
                 <input v-model="urlDatabase" type="text" placeholder="Enter the databaseUrl" />
                 <button @click="getResponseHTTP">Start test</button>
             </div>
-  
             <div class="container__item">
               <!-- <label for="">Thread quantity</label> -->
               <div class="container__item_input">

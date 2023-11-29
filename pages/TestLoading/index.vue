@@ -3,6 +3,10 @@
       <div class="container">
           <div class="container__item btn ">
               <input v-model="urlValue" type="text" placeholder="Enter the url" />
+              <select class="form-control" v-model="methodSelected" @change="changeMethod">
+                <option selected value="Http">Http</option>
+                <option value="Https">Https</option>
+              </select>
               <button @click="getResponseHTTP">Start test</button>
           </div>
 
@@ -19,7 +23,13 @@
             <div class="container__result__content">
               <div class="col-2">
                 <ul> 
-                  <li v-for="(listHttp, index) in listHttps" :key="index" @click="SelectJSON(listHttp)" :class="{'selected' : selectedJson === listHttp}">{{listHttp}}</li> 
+                  <li
+                  
+                   v-for="(listHttp, index) in listHttps" :key="index"
+                    @click="SelectJSON(listHttp)" 
+                    :class="{'selected' : selectedJson === listHttp}">
+                    {{listHttp}}
+                  </li> 
                 </ul> 
               </div>
               <div class="col-2">
@@ -35,8 +45,10 @@
                   <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                   <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                   <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
-                  <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p>
+                  <!-- <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p> -->
                   <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>
+                  <div v-html="selectedJson.response_body"></div>  
+                               
                 </div>
                 <div v-else-if="selectedJson?.response_code !== '200'" class="col__item">
                   <p><span>Thread Name: </span>{{ selectedJson?.thread_name }}</p>
@@ -47,7 +59,6 @@
               </div>
             </div>
           </div>
-          
           
       </div>
 
@@ -64,14 +75,10 @@ export default {
       threadsValue: "",
       isCheck: false,
       selectedJson: null,
-       
+      methodSelected: null,
     }
   },
-  created() {
-    // this.getResponseHTTP();
-    // console.log(this.listHttps, "dong")
-    // this.HandleSum()
-  },
+  created() {},
   methods: {
     async getResponseHTTP() {
       this.$axios({
@@ -93,17 +100,37 @@ export default {
           console.log(Arr)
           this.listHttps = Arr;
           this.isCheck = true;
-          this.HandleSum();
         }
       }).then(({ data }) => Promise.resolve(data));
     },
-    HandleSum() {
-      return this.listHttps.forEach((item) => {
-        console.log(item.thread_name, "dong")
-      })
+    async getResponseHTTPs() {
+      this.$axios({
+        url: `http://localhost:8080/api/v1/http-methods/get/https/${this.urlValue}?threads=${this.threadsValue}&iterations=${this.iterationValue}`,
+        data: {
+          prompt: 'json data'
+        },
+        headers: {
+          'accept': '*',
+          'content-type': 'application/json'    
+        },
+        method: 'GET',
+        onDownloadProgress: progressEvent => {
+          const xhr = progressEvent?.target
+          const dataString = xhr.responseText.replace(/data:/g, '');
+          const lines = dataString.split('\n');
+          const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+          const Arr = filteredArray.map(line => JSON.parse(line));
+          console.log(Arr)
+          this.listHttps = Arr;
+          this.isCheck = true;
+        }
+      }).then(({ data }) => Promise.resolve(data));
+    },
+    changeMethod() {
+        
     },
     SelectJSON(json) {
-      this.selectedJson = json
+      this.selectedJson = json;
     }
     
   }
@@ -120,6 +147,7 @@ export default {
     column-gap: 12px;
     width: 88%;
 
+    select,
     input {
       width: 100%;
       height: 48px;
@@ -129,6 +157,10 @@ export default {
       padding: 0 20px;
       font-size: 16px;
       margin-bottom: 24px;
+    }
+
+    select {
+      width: 30%;
     }
 
     button {

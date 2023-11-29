@@ -8,7 +8,7 @@
             <div class="container__input">
               <h4>Select option for test your Website</h4>
               <select name="LeaveType" class="form-control" v-model="optionSelected" @change="changeOption">
-                <option value="TestLoading">Test Loading</option>
+                <option value="TestLoading" selected>Test Loading</option>
                 <option value="TestJDBC">Test JDBC</option>
                 <option value="3">Apache Jmeter</option>
                 <option value="4">Burp Suite</option>
@@ -23,7 +23,6 @@ export default {
     data() {
         return {
           optionSelected: null,
-
         }
     },
     created() {
