@@ -25,7 +25,6 @@
     display: flex;  
 }
 .nuxt-container {
-    margin-top: 236px;
     width: 100%;
 }
 </style>

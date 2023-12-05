@@ -1,7 +1,12 @@
  <template>
-    <div class="nav-bar-container">
+    <div 
+    class="nav-bar-container"
+    >
         <div class="nav-bar-main">
-            <div class="container__header">
+            <div 
+            class="container__header"
+            
+            >
                 <h2>PBL WebSite Load Test</h2>
                 <!-- <p>Enter a URL to test the page load time, analyze it, and find bottlenecks.</p> -->
             </div>
@@ -10,8 +15,8 @@
               <select name="LeaveType" class="form-control" v-model="optionSelected" @change="changeOption">
                 <option value="TestLoading" selected>Test Loading</option>
                 <option value="TestJDBC">Test JDBC</option>
-                <option value="3">Apache Jmeter</option>
-                <option value="4">Burp Suite</option>
+                <option value="TestPost">Burp Suite</option>
+                <option value="TestJmeter">Apache Jmeter</option>
               </select>
             </div>
         </div>
@@ -22,16 +27,18 @@
 export default {
     data() {
         return {
-          optionSelected: null,
+          optionSelected: "TestLoading",
+          isHiddenHeader: true,
         }
     },
     created() {
-      console.log(this.optionSelected, "dong")
+      //console.log(this.optionSelected, "dong")
+      this.changeOption();
     },
     methods: {
       changeOption() {
         this.$router.push(`/${this.optionSelected}`);
-      }
+      },
   },
 }
 </script>
@@ -39,7 +46,7 @@ export default {
 <style scoped lang="scss">
 .nav-bar-container {
     background: #000;
-    position: fixed;
+    //position: fixed;
     top: 0;
     left: 0;
     width: 100%;
