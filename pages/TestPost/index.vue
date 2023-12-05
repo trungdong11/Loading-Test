@@ -3,11 +3,13 @@
         <div class="container">
             <div class="container__item btn ">
                 <input v-model="urlValue" type="text" placeholder="Enter the url" />
-                <!-- <select class="form-control" v-model="methodSelected">
-                  <option selected value="Http">Http</option>
-                  <option value="Https">Https</option>
-                </select> -->
-                <button @click="getResponseHTTP">Start test</button>
+                <select class="form-control" v-model="methodSelected">
+                  <option selected value="HttpMVC">Http MVC</option>
+                  <option value="HttpsMVC">Https</option>
+                  <option value="HttpAPI">Http API</option>
+                  <option value="HttpsAPI">Https API</option>
+                </select>
+                <button @click="startTest">Start test</button>
             </div>
   
             <div class="container__item">
@@ -62,7 +64,6 @@
                     <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                     <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                     <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
-                    <!-- <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p> -->
                     <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>
                     <div v-html="selectedJson.response_body"></div>  
                                  
@@ -91,7 +92,7 @@
         threadsValue: "",
         isCheck: false,
         selectedJson: null,
-        methodSelected: null,
+        methodSelected: 'HttpMVC',
         keyValuePairList: [{ key: "username", value: "Anh Dung" }],
       }
     },
@@ -99,7 +100,7 @@
       
     },
     methods: {
-      async getResponseHTTP() {
+      async methodMVCHTTP() {
         const requestBody = {
             // key: ["username", "password", "woocommerce-login-nonce", "_wp_http_referer", "login"],
             // value: ["Anh Dung", "leanhdung123()45", "065e01ef1e", "/my-account/", "Log in"]
@@ -125,8 +126,98 @@
             this.isCheck = true;
           }
         }).then(({ data }) => Promise.resolve(data));
-        console.log(this.key, "dfasdf")
       },
+      async methodMVCHTTPs() {
+        const requestBody = {
+            key: this.keyValuePairList.map(i => i.key),
+            value: this.keyValuePairList.map(i => i.value)
+        };
+        this.$axios({
+          url: `http://localhost:8080/api/v1/http-methods/post/mvc/https?url=${this.urlValue}&threads=${this.threadsValue}`,
+          data: requestBody,
+          headers: {
+            'accept': '*',  
+            'content-type': 'application/json'
+          },
+          method: 'POST',
+          onDownloadProgress: progressEvent => {
+            const xhr = progressEvent?.target
+            const dataString = xhr.responseText.replace(/data:/g, '');
+            const lines = dataString.split('\n');
+            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+            const Arr = filteredArray.map(line => JSON.parse(line));
+            // console.log(Arr)
+            this.listHttps = Arr;
+            this.isCheck = true;
+          }
+        }).then(({ data }) => Promise.resolve(data));
+      },
+      async methodAPIHTTP() {
+        const requestBody = {
+            key: this.keyValuePairList.map(i => i.key),
+            value: this.keyValuePairList.map(i => i.value)
+        };
+        this.$axios({
+          url: `http://localhost:8080/api/v1/http-methods/post/api/http?url=${this.urlValue}&threads=${this.threadsValue}`,
+          data: requestBody,
+          headers: {
+            'accept': '*',  
+            'content-type': 'application/json'
+          },
+          method: 'POST',
+          onDownloadProgress: progressEvent => {
+            const xhr = progressEvent?.target
+            const dataString = xhr.responseText.replace(/data:/g, '');
+            const lines = dataString.split('\n');
+            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+            const Arr = filteredArray.map(line => JSON.parse(line));
+            // console.log(Arr)
+            this.listHttps = Arr;
+            this.isCheck = true;
+          }
+        }).then(({ data }) => Promise.resolve(data));
+      },
+      async methodAPIHTTPs() {
+        const requestBody = {
+            key: this.keyValuePairList.map(i => i.key),
+            value: this.keyValuePairList.map(i => i.value)
+        };
+        this.$axios({
+          url: `http://localhost:8080/api/v1/http-methods/post/api/https?url=${this.urlValue}&threads=${this.threadsValue}`,
+          data: requestBody,
+          headers: {
+            'accept': '*',  
+            'content-type': 'application/json'
+          },
+          method: 'POST',
+          onDownloadProgress: progressEvent => {
+            const xhr = progressEvent?.target
+            const dataString = xhr.responseText.replace(/data:/g, '');
+            const lines = dataString.split('\n');
+            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+            const Arr = filteredArray.map(line => JSON.parse(line));
+            // console.log(Arr)
+            this.listHttps = Arr;
+            this.isCheck = true;
+          }
+        }).then(({ data }) => Promise.resolve(data));
+      },
+      startTest() {
+        if(this.methodSelected === 'HttpMVC')
+        {
+          this.methodMVCHTTP();
+        }else if(this.methodSelected === "HttpsMVC")
+        {
+          this.methodMVCHTTPs();
+        }else if(this.methodSelected === "HttpAPI")
+        {
+          this.methodAPIHTTP();
+        }else if(this.methodSelected === "HttpsAPI")
+        {
+          this.methodAPIHTTPs();
+        }
+        
+    },
       SelectJSON(json) {
         this.selectedJson = json;
       },

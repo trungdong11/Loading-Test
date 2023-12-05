@@ -67,28 +67,23 @@
 
                 <div class="col__item" v-if="isShowOVerview" >
                     <div class="col__item__detail">
-                      <!-- <p><span>Server Software:  </span>{{ listHttp.server_software }}</p>
-                      <p><span>Server Host:  </span>{{ listHttp.server_host }}</p>
-                      <p><span>Server Post:  </span>{{ listHttp.server_port }}</p> -->
+                       <p><span>Server Software:  </span>{{ total.serverSoftware }}</p>
+                      <p><span>Server Host:  </span>{{ total.serverHost }}</p>
+                      <p><span>Server Post:  </span>{{ total.serverPort }}</p> 
                       <p><span>Time taken for test:  </span>{{ total.callApi }}</p>
                       <p><span>Non-2xx responses: </span>{{total.nonResponse}}</p>
                       <p><span>Keep-alive request: </span>{{total.keepAliveRequest}}</p>
                       <p><span>HTML Transferred: </span>{{total.htmlTransfer}}</p>
+                      <p><span>Connect Time min: </span>{{total.connectTime.min}}</p>
+                      <p><span>Connect Time max: </span>{{total.connectTime.max}}</p>
+                      <p><span>Connect Time avg: </span>{{total.connectTime.avg}}</p>
+                      <p><span>Loading Time min: </span>{{total.LoadTime.min}}</p>
+                      <p><span>Loading Time max: </span>{{total.LoadTime.max}}</p>
+                      <p><span>Loading Time avg: </span>{{total.LoadTime.avg}}</p>
+                      <p><span>Latency Time min: </span>{{total.Latency.min}}</p>
+                      <p><span>Latency Time max: </span>{{total.Latency.max}}</p>
+                      <p><span>Latency Time avg: </span>{{total.Latency.avg}}</p>
                       
-                      <!-- <p><span>Keep Alive:  </span>{{ selectedJson.keep_alive }}</p>
-                      <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }}</p>
-                      <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
-                      <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
-                      <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
-                      <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
-                      <p><span>Load time: </span>{{ selectedJson.load_time }}</p>
-                      <p><span>Connect time:  </span>{{ selectedJson.connect_time }}</p>
-                      <p><span>Latency:  </span>{{ selectedJson.latency }}</p>
-                      <p><span>Header size:  </span>{{ selectedJson.header_size }}</p>
-                      <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
-                      <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
-                      <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p> -->
-                      <!-- <div v-html="selectedJson.response_body"></div>   -->
                                    
                     </div>
                     
@@ -134,6 +129,9 @@ export default {
       isShowDetail: false,
       isShowOVerview: true,
       total: {
+        serverSoftware: '',
+        serverHost: '',
+        serverPort: '',
         LoadingTime: 0,
         callApi: 0,
         nonResponse: 0,
@@ -224,8 +222,7 @@ export default {
         }else if(this.methodSelected === "Https")
         {
           this.getResponseHTTPs();
-        }
-        
+        }   
     },
     SelectJSON(json) {  
       this.selectedJson = json;
@@ -250,8 +247,15 @@ export default {
       let initNonResponse = 0;
       let initHtmlTransfer = 0;
       let initConnectTime = 0;
+      let initConnectTimeMin = Infinity;
+      let initConnectTimeMax = 0;
       let initLoadTime = 0;
+      let initLoadTimeMin = Infinity;
+      let initLoadTimeMax = 0;
       let initLatency = 0;
+      let initLatencyMin = Infinity;
+      let initLatencyMax = 0;
+      
       let count = 0;
 
       this.listHttps.forEach((d) => {
@@ -261,23 +265,58 @@ export default {
         if(d.keep_alive === 'true') {
           initKeepAlive++;
         }
+        if(d.connect_time > initConnectTimeMax)
+         {
+          initConnectTimeMax = parseInt(d.connect_time) 
+         }
+        if(d.connect_time < initConnectTimeMin) 
+        {
+          initConnectTimeMin = parseInt(d.connect_time)
+        }
+
+        if(d.load_time > initLoadTimeMax)
+         {
+          initLoadTimeMax = parseInt(d.load_time) 
+         }
+        if(d.load_time < initLoadTimeMin) 
+        {
+          initLoadTimeMin = parseInt(d.load_time)
+        }
+
+        if(d.latency > initLatencyMax)
+         {
+          initLatencyMax = parseInt(d.latency) 
+         }
+        if(d.latency < initLatencyMin) 
+        {
+          initLatencyMin = parseInt(d.latency)
+        }
         
+        this.total.serverSoftware = d.server_software
+        this.total.serverHost = d.server_host
+        this.total.serverPort = d.server_port
         count++
         initHtmlTransfer += parseInt(d.html_transferred)
         initConnectTime += parseInt(d.connect_time)
         initLoadTime += parseInt(d.load_time)
         initLatency += parseInt(d.latency)
-        // init += parseInt(d.load_time)
-        // console.log(d.load_time, 'dondgas')
+        
+
       })
       this.total.keepAliveRequest = initKeepAlive;
       this.total.nonResponse = initNonResponse;
       this.total.htmlTransfer = initHtmlTransfer; 
-      console.log(count, 'dongongo')
-      this.total.connectTime = initConnectTime / count;
+      this.total.connectTime.avg = initConnectTime / count;
+      this.total.LoadTime.avg = initLoadTime / count;
+      this.total.Latency.avg = initLatency / count;
+      this.total.connectTime.max = initConnectTimeMax
+      this.total.connectTime.min = initConnectTimeMin 
+      this.total.LoadTime.max = initLoadTimeMax
+      this.total.LoadTime.min = initLoadTimeMin
+      this.total.Latency.max = initLatencyMax
+      this.total.Latency.min = initLatencyMin
 
-      // console.log(init, 'test')
-      // this.total.LoadingTime = init
+      
     }
     
   }
