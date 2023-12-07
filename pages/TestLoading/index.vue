@@ -93,13 +93,13 @@
             </div>
 
             <div class="container__result__chart">
-              <!-- <div class="row mt-5" v-if="listLoadTime.length > 0">
+              <div class="row mt-5" v-if="listLoadTime.length > 0">
                 <div class="col">
                   <h2>LoadingTime</h2>
                   <line-chart :chartData="listLoadTime" :options="chartOptions" label="LoadTime"/>
                 </div>
 
-              </div> -->
+              </div>  
             </div>
           </div>
           
@@ -160,7 +160,6 @@ export default {
     LineChart,
   },
   created() {
-    
   },
   methods: {
     async getResponseHTTP() {
@@ -188,7 +187,7 @@ export default {
           this.LoadingTimeTest();
           const endTime = performance.now();
           this.total.callApi = endTime - startTime
-          console.log(endTime - startTime, "test")
+          // console.log(endTime - startTime, "test")
         }
       }).then(({ data }) => Promise.resolve(data));
     },
@@ -216,6 +215,8 @@ export default {
       }).then(({ data }) => Promise.resolve(data));
     },
     startTest() {
+        this.selectedJson = null
+
         if(this.methodSelected === 'Http')
         {
           this.getResponseHTTP();
