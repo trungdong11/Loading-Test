@@ -83,7 +83,7 @@
                       <p><span>Latency Time min: </span>{{total.Latency.min}}</p>
                       <p><span>Latency Time max: </span>{{total.Latency.max}}</p>
                       <p><span>Latency Time avg: </span>{{total.Latency.avg}}</p>
-                      
+                      <p><span>Throughput: </span>{{total.throughput}}</p>
                                    
                     </div>
                     
@@ -93,14 +93,23 @@
             </div>
 
             <div class="container__result__chart">
-              <div class="row mt-5" v-if="listLoadTime.length > 0">
+              <div class="row mt-5">
                 <div class="col">
-                  <h2>LoadingTime</h2>
-                  <line-chart :chartData="listLoadTime" :options="chartOptions" label="LoadTime"/>
+                  <!-- <h2>LoadingTime</h2> -->
+                  <!-- <apexchart type="area" height="350" :options="chartOptions" :series="series"></apexchart> -->
+                  <!-- <line-chart/> -->
                 </div>
 
               </div>  
             </div>
+          </div>
+
+
+          <div class="chart">
+            <line-chart
+             :chartData="chartData"
+              :options="chartOptions"
+              class="line-chart" />
           </div>
           
       </div>
@@ -109,11 +118,48 @@
 </template>
 
 <script>
-import LineChart from '~/components/Commons/LineChart.vue';
+//import VueApexCharts from 'vue-apexcharts'
+import LineChart from '~/components/Commons/LineChart.vue'
 
 export default {
+  components: {
+    LineChart
+	},
   data() {
     return {
+      loaded: false,
+      chartData: {
+        // labels: ["Jan", "Feb", "Mar", "Apr"],
+        labels: [],
+        datasets: [
+          {
+            label: "Numbers",
+            borderColor: "#4bcc96",
+            borderWidth: 4,
+            // data: [100, 150, 300, 200],
+            data: [],
+            fill: false,
+            pointBackgroundColor: "#4bcc96",
+            pointRadius: 4, 
+            pointHoverRadius: 8,
+            pointHoverBorderColor: "#000"
+          }
+        ]
+      },
+      chartOptions: {
+        maintainAspectRatio: false,
+        responsive: true,
+        tooltips: {
+          backgroundColor: "#0066ff!important",
+          titleFontColor: "#ffff",
+          bodyFontColor: "#ffff",
+          position: "nearest",
+          mode: "nearest",
+          intersect: 0,
+          bodySpacing: 4,
+          xPadding: 20,
+        }
+      },
       listHttps: [],  
       urlValue: "",
       iterationValue: "",
@@ -122,6 +168,7 @@ export default {
       selectedJson: null,
       methodSelected: "Http",
       listLoadTime: [],
+      listThreadName: [],
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false, 
@@ -151,15 +198,14 @@ export default {
           min: 0,
           avg: 0,
           max: 0,
-        }
+        }, 
+        throughput: 0,
       }
       
     }
   },
-  components: {
-    LineChart,
-  },
-  created() {
+
+  mounted() {
   },
   methods: {
     async getResponseHTTP() {
@@ -192,6 +238,7 @@ export default {
       }).then(({ data }) => Promise.resolve(data));
     },
     async getResponseHTTPs() {
+      const startTime = performance.now();
       this.$axios({
         url: `http://localhost:8080/api/v1/http-methods/get/https?url=${this.urlValue}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
         data: {
@@ -211,15 +258,21 @@ export default {
           console.log(Arr)
           this.listHttps = Arr;
           this.isCheck = true;
+          this.LoadingTime();
+          this.LoadingTimeTest();
+          const endTime = performance.now();
+          this.total.callApi = endTime - startTime
+          this.timeOff();
+          // console.log(endTime - startTime, "test")
         }
       }).then(({ data }) => Promise.resolve(data));
     },
     startTest() {
         this.selectedJson = null
-
         if(this.methodSelected === 'Http')
         {
           this.getResponseHTTP();
+          this.$nextTick();
         }else if(this.methodSelected === "Https")
         {
           this.getResponseHTTPs();
@@ -237,11 +290,17 @@ export default {
       this.isShowOVerview = true;
     },
     LoadingTime() {
+      this.listLoadTime = []
+      this.listThreadName = []
       this.listHttps.forEach((d) => {
-      this.listLoadTime.push({total: d.load_time})
-      // console.log(this.listLoadTime, "dong")
+        this.listLoadTime.push( parseInt(d.load_time))
+        this.listThreadName.push(d.thread_name)
       })
-      console.log(this.listLoadTime, "dong11")
+      
+      this.chartData.labels = this.listThreadName;
+      this.chartData.datasets.data = this.listLoadTime;
+      console.log(this.chartData.labels, "dong11")
+      console.log(this.chartData.datasets.data, "dong12")
     },
     LoadingTimeTest() {
       let initKeepAlive = 0;
@@ -317,8 +376,20 @@ export default {
       this.total.Latency.max = initLatencyMax
       this.total.Latency.min = initLatencyMin
 
-      
-    }
+      let timeFirst = new Date(this.listHttps[0].start_at)
+      console.log(timeFirst, "first")
+      console.log(timeFirst.getTime(), "first")
+      let timeLast = new Date(this.listHttps.slice(-1)[0].start_at)
+      console.log(timeLast, "last")
+      console.log(timeLast.getTime(), "last")
+      console.log(timeLast.getTime() - timeFirst.getTime(), "subTime")
+      let loadTimeLast = parseInt(this.listHttps.slice(-1)[0].load_time)
+      console.log(loadTimeLast, "loadingtime")
+      let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
+      this.total.throughput = (this.threadsValue * this.iterationValue) / sumTime;
+      console.log(this.total.throughput, "test time")
+
+    }, 
     
   }
 }
@@ -487,5 +558,10 @@ export default {
 
 .selected {
   color: #EE6457;
+}
+
+.line-chart {
+  width: 60vw;
+  height: 50vh;
 }
 </style>
