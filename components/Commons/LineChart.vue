@@ -1,33 +1,11 @@
 <script>
-
-import { Line } from 'vue-chartjs'
+import {Line} from "vue-chartjs"
 
 export default {
     extends: Line,
-    props: {
-        label: {
-            type: String
-        },
-        chartData: {
-            type: Array
-        },
-        options: {
-            type: Object
-        }
-    },
+    props: ["chartData", "options"],
     mounted() {
-        const totals = this.chartData.map(d => d.total).reverse();
-
-        // this.renderChart({
-        //     labels: "teda",
-        //     datasets:[{
-        //         label: this.label,
-        //         data: totals
-        //     }]
-        // })
-    }, 
-    methods: {
-
+        this.renderChart(this.chartData, this.options);
     }
 }
 </script>
