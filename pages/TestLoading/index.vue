@@ -2,7 +2,7 @@
   <div>
       <div class="container">
           <div class="container__item btn ">
-              <input v-model="urlValue" type="text" placeholder="Enter the url" />
+              <input v-model="urlValue" type="url" name="keyword" placeholder="Enter the url" />
               <select class="form-control" v-model="methodSelected">
                 <option selected value="Http">Http</option>
                 <option value="Https">Https</option>
@@ -11,7 +11,6 @@
           </div>
 
           <div class="container__item">
-            <!-- <label for="">Thread quantity</label> -->
             <input v-model="threadsValue" type="text" placeholder="Enter the thread quantity" />
             <input v-model="iterationValue" type="text" placeholder="Enter the iteration" />  
           </div>
@@ -20,8 +19,14 @@
             <div class="container__result__header">
               <h2>Discover what your real users are experiencing</h2>
             </div>
-            <div class="container__result__content">
-              <div class="col-2">
+            <div class="container__result__btn">
+              <button @click="handleDetail" class="detail" :class="{'active': isShowDetail === true}">Detail</button>
+              <button @click="handleOverview" class="overview" :class="{'active': isShowOVerview === true}">Overview</button>
+              <button @click="handleChart" class="chart" :class="{'active': isShowChart === true}">Chart</button>
+              <button @click="handleRender" class="render" :class="{'active': isShowRender === true}">Render</button>
+            </div>
+            <div class="container__result__content container__global" v-if="isShowDetail">
+              <div class="col-2" >
                 <ul> 
                   <li
                     v-for="(listHttp, index) in listHttps" :key="index"
@@ -31,12 +36,8 @@
                   </li> 
                 </ul> 
               </div>
-              <div class="col-2">
-                <div class="col__btn">
-                  <a @click="handleDetail" :class="{'active': isShowDetail === true}">Detail</a>
-                  <a @click="handleOverview" :class="{'active': isShowOVerview === true}">Overview</a>
-                </div>
-                <div class="col__item" v-if="isShowDetail">
+              <div class="col-2" >
+                <div class="col__item">
                   <div class="col__item__detail" v-if="selectedJson?.response_code === '200'">
                     <p><span>Server Software:  </span>{{ selectedJson.server_software }}</p>
                     <p><span>Server Host:  </span>{{ selectedJson.server_host }}</p>
@@ -47,78 +48,59 @@
                     <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                     <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
                     <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
-                    <p><span>Load time: </span>{{ selectedJson.load_time }}</p>
-                    <p><span>Connect time:  </span>{{ selectedJson.connect_time }}</p>
-                    <p><span>Latency:  </span>{{ selectedJson.latency }}</p>
-                    <p><span>Header size:  </span>{{ selectedJson.header_size }}</p>
+                    <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
+                    <p><span>Connect time:  </span>{{ selectedJson.connect_time }} s</p>
+                    <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
+                    <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
                     <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                     <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                     <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>
-                    <!-- <div v-html="selectedJson.response_body"></div>   -->
-                                 
                   </div>
-                  <div v-else-if="selectedJson?.response_code !== '200'" class="col__item">
+                  <div v-else-if="selectedJson?.response_code !== '200'" class="col__item__detail">
                     <p><span>Thread Name: </span>{{ selectedJson?.thread_name }}</p>
                     <p><span>Iterations: </span>{{ selectedJson?.iterations }}</p>
                     <p><span>Response Message: </span>{{ selectedJson?.response_message }}</p>
                     <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p>
                   </div>
                 </div>
-
-                <div class="col__item" v-if="isShowOVerview" >
-                    <div class="col__item__detail">
-                       <p><span>Server Software:  </span>{{ total.serverSoftware }}</p>
-                      <p><span>Server Host:  </span>{{ total.serverHost }}</p>
-                      <p><span>Server Post:  </span>{{ total.serverPort }}</p> 
-                      <p><span>Time taken for test:  </span>{{ total.callApi }}</p>
-                      <p><span>Non-2xx responses: </span>{{total.nonResponse}}</p>
-                      <p><span>Keep-alive request: </span>{{total.keepAliveRequest}}</p>
-                      <p><span>HTML Transferred: </span>{{total.htmlTransfer}}</p>
-                      <p><span>Connect Time min: </span>{{total.connectTime.min}}</p>
-                      <p><span>Connect Time max: </span>{{total.connectTime.max}}</p>
-                      <p><span>Connect Time avg: </span>{{total.connectTime.avg}}</p>
-                      <p><span>Loading Time min: </span>{{total.LoadTime.min}}</p>
-                      <p><span>Loading Time max: </span>{{total.LoadTime.max}}</p>
-                      <p><span>Loading Time avg: </span>{{total.LoadTime.avg}}</p>
-                      <p><span>Latency Time min: </span>{{total.Latency.min}}</p>
-                      <p><span>Latency Time max: </span>{{total.Latency.max}}</p>
-                      <p><span>Latency Time avg: </span>{{total.Latency.avg}}</p>
-                      <p><span>Throughput: </span>{{total.throughput}}</p>
-                                   
-                    </div>
-                    
-                </div>
-                
               </div>
             </div>
-
-            <div class="container__result__chart">
-              <div class="row mt-5">
-                <div class="col">
-                  <!-- <h2>LoadingTime</h2> -->
-                  <!-- <apexchart type="area" height="350" :options="chartOptions" :series="series"></apexchart> -->
-                  <!-- <line-chart/> -->
-                </div>
-
-              </div>  
+            <div class="container__result__overview container__global" v-if="isShowOVerview">
+              <p><span>Server Software:  </span>{{ total.serverSoftware }}</p>
+              <p><span>Server Host:  </span>{{ total.serverHost }}</p>
+              <p><span>Server Post:  </span>{{ total.serverPort }}</p> 
+              <p><span>Time taken for test:  </span>{{ total.callApi }} ms</p>
+              <p><span>Non-2xx responses: </span>{{total.nonResponse}}</p>
+              <p><span>Keep-alive request: </span>{{total.keepAliveRequest}}</p>
+              <p><span>HTML Transferred: </span>{{total.htmlTransfer}} ms</p>
+              <p><span>Connect Time min: </span>{{total.connectTime.min}} ms</p>
+              <p><span>Connect Time max: </span>{{total.connectTime.max}} ms</p>
+              <p><span>Connect Time avg: </span>{{total.connectTime.avg}} ms</p>
+              <p><span>Loading Time min: </span>{{total.LoadTime.min}} ms</p>
+              <p><span>Loading Time max: </span>{{total.LoadTime.max}} ms</p>
+              <p><span>Loading Time avg: </span>{{total.LoadTime.avg}} ms</p>
+              <p><span>Latency Time min: </span>{{total.Latency.min}} ms</p>
+              <p><span>Latency Time max: </span>{{total.Latency.max}} ms</p>
+              <p><span>Latency Time avg: </span>{{total.Latency.avg}} ms</p>
+              <p><span>Throughput: </span>{{total.throughput}} s</p>
             </div>
-          </div>
-
-
-          <div class="chart">
-            <line-chart
-             :chartData="chartData"
+            <div class="container__result__chart container__global" v-if="isShowChart">
+              <line-chart
+              :chartData="chartData"
               :options="chartOptions"
               class="line-chart" />
+            </div>
+            <div class="container__result__render container__global" v-if="isShowRender">
+              <!-- <p v-html="listHttps[0]?.response_body"></p>   -->
+              <iframe width="100%" height="100vh" :srcdoc="listHttps[0]?.response_body"></iframe>
+            </div>
           </div>
-          
-      </div>
+      </div>  
 
   </div>  
 </template>
 
 <script>
-//import VueApexCharts from 'vue-apexcharts'
 import LineChart from '~/components/Commons/LineChart.vue'
 
 export default {
@@ -133,7 +115,7 @@ export default {
         labels: [],
         datasets: [
           {
-            label: "Numbers",
+            label: "Load Time",
             borderColor: "#4bcc96",
             borderWidth: 4,
             // data: [100, 150, 300, 200],
@@ -175,6 +157,8 @@ export default {
       },
       isShowDetail: false,
       isShowOVerview: true,
+      isShowChart: false,
+      isShowRender: false,
       total: {
         serverSoftware: '',
         serverHost: '',
@@ -204,9 +188,6 @@ export default {
       
     }
   },
-
-  mounted() {
-  },
   methods: {
     async getResponseHTTP() {
       const startTime = performance.now();
@@ -231,10 +212,14 @@ export default {
           this.isCheck = true;
           this.LoadingTime();
           this.LoadingTimeTest();
+          
+          this.listLoadTime.push(this.total.throughput)
+        // console.log(this.listLoadTime, "listLoadTime")
+          
           const endTime = performance.now();
           this.total.callApi = endTime - startTime
-          // console.log(endTime - startTime, "test")
         }
+        
       }).then(({ data }) => Promise.resolve(data));
     },
     async getResponseHTTPs() {
@@ -261,7 +246,7 @@ export default {
           this.LoadingTime();
           this.LoadingTimeTest();
           const endTime = performance.now();
-          this.total.callApi = endTime - startTime
+          this.total.callApi = endTime - startTime;
           this.timeOff();
           // console.log(endTime - startTime, "test")
         }
@@ -269,10 +254,12 @@ export default {
     },
     startTest() {
         this.selectedJson = null
+        this.listLoadTime = []
         if(this.methodSelected === 'Http')
         {
+
           this.getResponseHTTP();
-          this.$nextTick();
+          
         }else if(this.methodSelected === "Https")
         {
           this.getResponseHTTPs();
@@ -284,23 +271,38 @@ export default {
     handleDetail() {
       this.isShowDetail = true;
       this.isShowOVerview = false;
+      this.isShowChart = false;
+      this.isShowRender = false;
     },
     handleOverview() {
       this.isShowDetail = false;
       this.isShowOVerview = true;
+      this.isShowChart = false;
+      this.isShowRender = false;
+    },
+    handleChart() {
+      this.isShowDetail = false;
+      this.isShowOVerview = false;
+      this.isShowChart = true;
+      this.isShowRender = false;
+    },
+    handleRender() {
+      this.isShowDetail = false;
+      this.isShowOVerview = false;
+      this.isShowChart = false;
+      this.isShowRender = true;
     },
     LoadingTime() {
-      this.listLoadTime = []
-      this.listThreadName = []
+      this.chartData.labels = []
+      this.chartData.datasets[0].data = []
+      
       this.listHttps.forEach((d) => {
-        this.listLoadTime.push( parseInt(d.load_time))
-        this.listThreadName.push(d.thread_name)
+        this.chartData.datasets[0].data.push( parseInt(d.load_time))
+        this.chartData.labels.push(d.thread_name)
       })
       
-      this.chartData.labels = this.listThreadName;
-      this.chartData.datasets.data = this.listLoadTime;
       console.log(this.chartData.labels, "dong11")
-      console.log(this.chartData.datasets.data, "dong12")
+      console.log(this.chartData.datasets[0].data, "dong12")
     },
     LoadingTimeTest() {
       let initKeepAlive = 0;
@@ -366,9 +368,9 @@ export default {
       this.total.keepAliveRequest = initKeepAlive;
       this.total.nonResponse = initNonResponse;
       this.total.htmlTransfer = initHtmlTransfer; 
-      this.total.connectTime.avg = initConnectTime / count;
-      this.total.LoadTime.avg = initLoadTime / count;
-      this.total.Latency.avg = initLatency / count;
+      this.total.connectTime.avg = parseFloat(initConnectTime / count).toFixed(2);
+      this.total.LoadTime.avg = parseFloat(initLoadTime / count).toFixed(2);
+      this.total.Latency.avg = parseFloat(initLatency / count).toFixed(2);
       this.total.connectTime.max = initConnectTimeMax
       this.total.connectTime.min = initConnectTimeMin 
       this.total.LoadTime.max = initLoadTimeMax
@@ -386,8 +388,10 @@ export default {
       let loadTimeLast = parseInt(this.listHttps.slice(-1)[0].load_time)
       console.log(loadTimeLast, "loadingtime")
       let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
+      
       this.total.throughput = (this.threadsValue * this.iterationValue) / sumTime;
-      console.log(this.total.throughput, "test time")
+      this.total.throughput = parseFloat(this.total.throughput).toFixed(2);
+      console.log(this.total.throughput, "test time") 
 
     }, 
     
@@ -459,16 +463,14 @@ export default {
 
     &__content {
       display: flex;
-      border: 1px solid #000;
-      border-radius: 6px;
 
       .col-2 {
         column-gap: 24px;
         width: 50%;
-        padding: 16px;
-        border-right: 1px solid #000;
         max-height: 500px;
         overflow: auto;
+
+
         
         ul {
           list-style: none;         
@@ -497,12 +499,24 @@ export default {
 
         .col__item {
           &__detail {
-          
+            display: flex;
+            flex-direction: row;
+            flex-wrap: wrap;
+            width: 100%;
+            gap: 10px;
+            padding-left: 24px;
+            
+            
             p {
-              font-size: 16px;
-              font-weight: 400;
+              text-align: center;
+              background-color: #F4F4F4;
+              padding: 12px 8px;
+              font-size: 17px;
+              font-weight: 500;
               line-height: 24px;
-              color: #EE6457;
+              color: #f75142;
+              width: 48%;
+              border-radius: 6px;
   
               span {
                 font-weight: 500;
@@ -548,12 +562,85 @@ export default {
         cursor: pointer;
       }
     }
+
+    &__btn {
+      margin-bottom: 24px;
+      
+      button {
+        font-size: 16px;
+        font-weight: 600;
+        color: #000;
+        padding: 10px 18px;
+        border-radius: 10px;
+        border: 1px solid #53CCEC;
+        outline: none;
+        margin: 0 6px;
+        background-color: #ffff;
+        cursor: pointer;
+        min-width: 106px;
+        
+      }
+      button:hover {
+        background-color: #53CCEC;
+        color: #ffff;
+      }
+    }
+
+    &__overview {
+      display: flex;
+      width: 100%;
+      align-items: center;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: center;
+      justify-content: center;
+      p {
+        text-align: center;
+        background-color: #F4F4F4;
+        padding: 12px 8px;
+        font-size: 17px;
+        font-weight: 500;
+        line-height: 24px;
+        color: #f75142;
+        width: 23%;
+        border-radius: 6px;
+
+        span {
+          font-weight: 500;
+          color: #000;
+        }
+      }
+    }
+
+    &__chart {
+      
+    }
+
+    &__render {
+      padding: 16px!important;
+      iframe {
+        width: 100%;
+        height: 100vh;
+        border: none;
+      }
+    }
   }
 }
 
 .active {
-  color: #0066ff!important;
-  text-decoration: underline!important;
+  background-color: #53CCEC!important;
+  color: #ffff!important;
+  border: none !important;
+}
+
+.container__global {
+  border-radius: 10px;
+  background-color: #fff;
+  box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+  -webkit-box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+  -moz-box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+  padding: 24px;
 }
 
 .selected {
@@ -561,7 +648,7 @@ export default {
 }
 
 .line-chart {
-  width: 60vw;
+  width: 100%;
   height: 50vh;
 }
 </style>
