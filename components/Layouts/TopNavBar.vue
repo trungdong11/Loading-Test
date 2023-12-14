@@ -16,7 +16,6 @@
                 <option value="TestLoading" selected>Test Loading</option>
                 <option value="TestJDBC">Test JDBC</option>
                 <option value="TestPost">Burp Suite</option>
-                <option value="TestJmeter">Apache Jmeter</option>
               </select>
             </div>
         </div>
