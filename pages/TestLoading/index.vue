@@ -3,10 +3,6 @@
       <div class="container">
           <div class="container__item btn ">
               <input v-model="urlValue" type="url" name="keyword" placeholder="Enter the url" />
-              <select class="form-control" v-model="methodSelected">
-                <option selected value="Http">Http</option>
-                <option value="Https">Https</option>
-              </select>
               <button @click="startTest">Start test</button>
           </div>
 
@@ -32,7 +28,16 @@
                     v-for="(listHttp, index) in listHttps" :key="index"
                     @click="SelectJSON(listHttp)" 
                     :class="{'selected' : selectedJson === listHttp}">
-                    {{listHttp}}
+                    <svg v-if="listHttp?.response_code === '200'" xmlns="http://www.w3.org/2000/svg"
+                     width="24" height="24" viewBox="0 0 24 24">
+                      <path fill="#407F3E"
+                       d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275q-.275.275-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7q-.275-.275-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
+                    </svg>
+                    <svg  v-if="listHttp?.response_code != '200'"  xmlns="http://www.w3.org/2000/svg"
+                     width="22" height="22" viewBox="0 0 24 24">
+                     <path fill="#D24150" d="m8.4 17l3.6-3.6l3.6 3.6l1.4-1.4l-3.6-3.6L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4l3.6 3.6L7 15.6zm3.6 5q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
+                    </svg>
+                    {{listHttp?.thread_name}}
                   </li> 
                 </ul> 
               </div>
@@ -43,13 +48,13 @@
                     <p><span>Server Host:  </span>{{ selectedJson.server_host }}</p>
                     <p><span>Server Post:  </span>{{ selectedJson.server_port }}</p>
                     <p><span>Keep Alive:  </span>{{ selectedJson.keep_alive }}</p>
-                    <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }}</p>
+                    <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }} byte</p>
                     <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                     <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                     <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
                     <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
                     <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
-                    <p><span>Connect time:  </span>{{ selectedJson.connect_time }} s</p>
+                    <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                     <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
                     <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
                     <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
@@ -72,7 +77,7 @@
               <p><span>Time taken for test:  </span>{{ total.callApi }} ms</p>
               <p><span>Non-2xx responses: </span>{{total.nonResponse}}</p>
               <p><span>Keep-alive request: </span>{{total.keepAliveRequest}}</p>
-              <p><span>HTML Transferred: </span>{{total.htmlTransfer}} ms</p>
+              <p><span>HTML Transferred: </span>{{total.htmlTransfer}} byte</p>
               <p><span>Connect Time min: </span>{{total.connectTime.min}} ms</p>
               <p><span>Connect Time max: </span>{{total.connectTime.max}} ms</p>
               <p><span>Connect Time avg: </span>{{total.connectTime.avg}} ms</p>
@@ -125,7 +130,20 @@ export default {
             pointRadius: 4, 
             pointHoverRadius: 8,
             pointHoverBorderColor: "#000"
-          }
+          },
+          {
+            label: "Load Time",
+            borderColor: "#53CCEC",
+            borderWidth: 4,
+            // data: [100, 150, 300, 200],
+            data: [],
+            fill: false,
+            pointBackgroundColor: "#53CCEC",
+            pointRadius: 4, 
+            pointHoverRadius: 8,
+            pointHoverBorderColor: "#000"
+          },
+
         ]
       },
       chartOptions: {
@@ -184,6 +202,10 @@ export default {
           max: 0,
         }, 
         throughput: 0,
+      }, 
+      data: {
+        LoadTime: [], 
+        Throughput: [],
       }
       
     }
@@ -192,7 +214,7 @@ export default {
     async getResponseHTTP() {
       const startTime = performance.now();
       this.$axios({
-        url: `http://localhost:8080/api/v1/http-methods/get/http?url=${this.urlValue}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
+        url: `http://localhost:8080/api/v1/http-methods/get?url=${this.urlValue}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
         data: {
           prompt: 'json data'
         },
@@ -210,60 +232,18 @@ export default {
           console.log(Arr)
           this.listHttps = Arr;
           this.isCheck = true;
-          this.LoadingTime();
-          this.LoadingTimeTest();
-          
-          this.listLoadTime.push(this.total.throughput)
-        // console.log(this.listLoadTime, "listLoadTime")
-          
+          this.HandleChartRender();
           const endTime = performance.now();
           this.total.callApi = endTime - startTime
+          this.HandleOverviewRender();
+
         }
         
       }).then(({ data }) => Promise.resolve(data));
     },
-    async getResponseHTTPs() {
-      const startTime = performance.now();
-      this.$axios({
-        url: `http://localhost:8080/api/v1/http-methods/get/https?url=${this.urlValue}&threads=${this.threadsValue}&iterations=${this.iterationValue}`,
-        data: {
-          prompt: 'json data'
-        },
-        headers: {
-          'accept': '*',
-          'content-type': 'application/json'    
-        },
-        method: 'GET',
-        onDownloadProgress: progressEvent => {
-          const xhr = progressEvent?.target
-          const dataString = xhr.responseText.replace(/data:/g, '');
-          const lines = dataString.split('\n');
-          const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-          const Arr = filteredArray.map(line => JSON.parse(line));
-          console.log(Arr)
-          this.listHttps = Arr;
-          this.isCheck = true;
-          this.LoadingTime();
-          this.LoadingTimeTest();
-          const endTime = performance.now();
-          this.total.callApi = endTime - startTime;
-          this.timeOff();
-          // console.log(endTime - startTime, "test")
-        }
-      }).then(({ data }) => Promise.resolve(data));
-    },
     startTest() {
         this.selectedJson = null
-        this.listLoadTime = []
-        if(this.methodSelected === 'Http')
-        {
-
-          this.getResponseHTTP();
-          
-        }else if(this.methodSelected === "Https")
-        {
-          this.getResponseHTTPs();
-        }   
+        this.getResponseHTTP();
     },
     SelectJSON(json) {  
       this.selectedJson = json;
@@ -292,19 +272,20 @@ export default {
       this.isShowChart = false;
       this.isShowRender = true;
     },
-    LoadingTime() {
+    HandleChartRender() {
       this.chartData.labels = []
       this.chartData.datasets[0].data = []
       
       this.listHttps.forEach((d) => {
         this.chartData.datasets[0].data.push( parseInt(d.load_time))
+        this.chartData.datasets[1].data.push( parseInt(d.connect_time))
         this.chartData.labels.push(d.thread_name)
       })
       
       console.log(this.chartData.labels, "dong11")
       console.log(this.chartData.datasets[0].data, "dong12")
     },
-    LoadingTimeTest() {
+    HandleOverviewRender() {
       let initKeepAlive = 0;
       let initNonResponse = 0;
       let initHtmlTransfer = 0;
@@ -379,14 +360,8 @@ export default {
       this.total.Latency.min = initLatencyMin
 
       let timeFirst = new Date(this.listHttps[0].start_at)
-      console.log(timeFirst, "first")
-      console.log(timeFirst.getTime(), "first")
       let timeLast = new Date(this.listHttps.slice(-1)[0].start_at)
-      console.log(timeLast, "last")
-      console.log(timeLast.getTime(), "last")
-      console.log(timeLast.getTime() - timeFirst.getTime(), "subTime")
       let loadTimeLast = parseInt(this.listHttps.slice(-1)[0].load_time)
-      console.log(loadTimeLast, "loadingtime")
       let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
       
       this.total.throughput = (this.threadsValue * this.iterationValue) / sumTime;
@@ -475,15 +450,24 @@ export default {
         ul {
           list-style: none;         
             li {
-              margin: 8px 0;
+              padding: 8px 0;
               border-bottom: 1px solid #9999;
               display: -webkit-box;
               -webkit-box-orient: vertical;
               overflow: hidden;
               -webkit-line-clamp: 2;
               cursor: pointer;
-              
-            }      
+              display: flex;
+              justify-items: center;
+              align-items: center;
+              gap: 8px;
+              font-size: 16px;
+            }     
+            
+            li:hover {
+              color: #407F3E;
+              font-weight: 600;
+            }
         }
 
         .col__btn {
@@ -644,7 +628,9 @@ export default {
 }
 
 .selected {
-  color: #EE6457;
+  color: #407F3E;
+  font-weight: 600;
+
 }
 
 .line-chart {
