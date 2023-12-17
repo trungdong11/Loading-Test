@@ -167,8 +167,6 @@ export default {
       isCheck: false,
       selectedJson: null,
       methodSelected: "Http",
-      listLoadTime: [],
-      listThreadName: [],
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false, 
