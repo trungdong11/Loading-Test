@@ -245,6 +245,9 @@ export default {
         this.selectedJson = null
         this.getResponseHTTP();
     },
+    inputValidate() {
+      this.urlValue = ""
+    },
     SelectJSON(json) {  
       this.selectedJson = json;
     },

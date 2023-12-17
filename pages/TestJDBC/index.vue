@@ -7,41 +7,32 @@
                     v-model="urlDatabase"
                     type="text" 
                     placeholder="Enter the databaseUrl"
-                    :class="{'error-border' : isInputEmpty(urlDatabase)}"
                   />
-                  <p class="error" v-if="isInputEmpty(urlDatabase)">The field is required</p>
                 </div>
                 <button @click="getResponseHTTP">Start test</button>
             </div>
             <div class="container__item input">
-              <!-- <label for="">Thread quantity</label> -->
               <div class="input">
                 <div class="item">
                   <input v-model="jdbcDriverClass" type="text" placeholder="Enter the jdbcDriverClass" />
-                  <p class="error" v-if="isInputEmpty(jdbcDriverClass)">The field is required</p>
                 </div>
                 <div class="item">
                   <input v-model="username" type="text" placeholder="Enter the Username" /> 
-                  <p class="error" v-if="isInputEmpty(username)">The field is required</p>
                 </div>
                 <div class="item">
                   <input v-model="password" type="text" placeholder="Enter the password" />
-                  <p class="error" v-if="isInputEmpty(password)">The field is required</p>
                 </div>
               </div>
 
               <div class="input">
                 <div class="item">
                   <input v-model="sqlStatement" type="text" placeholder="Enter the sqlStatement" />  
-                  <p class="error" v-if="isInputEmpty(sqlStatement)">The field is required</p>
                 </div>
                 <div class="item">
                   <input v-model="threadsValue" type="text" placeholder="Enter the thread quantity" />
-                  <p class="error" v-if="isInputEmpty(threadsValue)">The field is required</p>
                 </div>
                 <div class="item">
                   <input v-model="iterationValue" type="text" placeholder="Enter the iteration" />  
-                  <p class="error" v-if="isInputEmpty(iterationValue)">The field is required</p>
                 </div>
               </div>
               
@@ -51,52 +42,64 @@
               <div class="container__result__header">
                 <h2>Discover what your real users are experiencing</h2>
               </div>
-              <div class="container__result__content">
-                <div class="col-2">
+              <div class="container__result__btn">
+                <button @click="handleDetail" class="detail" :class="{'active': btn.isShowDetail === true}">Detail</button>
+                <button @click="handleChart" class="chart" :class="{'active': btn.isShowChart === true}">Chart</button>
+                <button @click="handleRender" class="render" :class="{'active': btn.isShowRender === true}">Render Data</button>
+              </div>
+              <div class="container__result__content container__global" v-if="btn.isShowDetail">
+                <div class="col-2" >
                   <ul> 
                     <li
                       v-for="(listHttp, index) in listHttps" :key="index"
                       @click="SelectJSON(listHttp)" 
                       :class="{'selected' : selectedJson === listHttp}">
-                      {{listHttp}}
-                    </li>
+                      <svg v-if="listHttp?.response_code === '200'" xmlns="http://www.w3.org/2000/svg"
+                       width="24" height="24" viewBox="0 0 24 24">
+                        <path fill="#407F3E"
+                         d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275q-.275.275-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7q-.275-.275-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
+                      </svg>
+                      <svg  v-if="listHttp?.response_code != '200'"  xmlns="http://www.w3.org/2000/svg"
+                       width="22" height="22" viewBox="0 0 24 24">
+                       <path fill="#D24150" d="m8.4 17l3.6-3.6l3.6 3.6l1.4-1.4l-3.6-3.6L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4l3.6 3.6L7 15.6zm3.6 5q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
+                      </svg>
+                      {{listHttp?.thread_name}}
+                    </li> 
                   </ul> 
                 </div>
-                <div class="col-2">
-                  <div class="col__btn">
-                    <a @click="handleDetail" :class="{'active': isShowDetail === true}">Detail</a>
-                    <a @click="handleOverview" :class="{'active': isShowOVerview === true}">Data response</a>
-                  </div>
-                  <div class="col__item" v-if="isShowDetail">
+                <div class="col-2" >
+                  <div class="col__item">
                     <div class="col__item__detail" v-if="selectedJson?.response_code === '200'">
                       <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                       <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
                       <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
-                      <p><span>Load time: </span>{{ selectedJson.load_time }}</p>
-                      <p><span>Connect time:  </span>{{ selectedJson.connect_time }}</p>
-                      <p><span>Latency:  </span>{{ selectedJson.latency }}</p>
-                      <p><span>Header size:  </span>{{ selectedJson.header_size }}</p>
+                      <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
+                      <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
+                      <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
+                      <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
                       <p><span>Body size:  </span>{{ selectedJson.body_size }}</p>
                       <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                       <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                     </div>
-                    <div v-else-if="selectedJson?.response_code !== '200'" class="col__item">
-                      <p><span>Thread Name: </span>{{ selectedJson.thread_name }}</p>
-                      <p><span>Iterations: </span>{{ selectedJson.iterations }}</p>
-                      <p><span>Response Message: </span>{{ selectedJson.response_message }}</p>
-                      <p><span>Response Body: </span>{{ selectedJson.response_body }}</p>
+                    <div v-else-if="selectedJson?.response_code !== '200'" class="col__item__detail">
+                      <p><span>Thread Name: </span>{{ selectedJson?.thread_name }}</p>
+                      <p><span>Iterations: </span>{{ selectedJson?.iterations }}</p>
+                      <p><span>Response Message: </span>{{ selectedJson?.response_message }}</p>
+                      <p><span>Response Body: </span>{{ selectedJson?.response_body }}</p>
                     </div>
                   </div>
-  
-                  <div class="col__item" v-if="isShowOVerview" >
-                      <div class="col__item__detail">
-                      <p>{{ dataResponse }}</p>
-                      </div>
-                      
-                  </div>
-                  
                 </div>
               </div>
+              <div class="container__result__chart container__global" v-if="btn.isShowChart">
+                <line-chart
+                :chartData="chartData"
+                :options="chartOptions"
+                class="line-chart" />
+              </div>
+              <div class="container__result__renderData container__global" v-if="btn.isShowRender">
+                <vue-json-pretty :data="dataRender" />
+              </div>
+              
             </div>
             
             
@@ -106,9 +109,17 @@
   </template>
   
   <script>
+  import LineChart from '~/components/Commons/LineChart.vue'
+  import VueJsonPretty from 'vue-json-pretty';
+  import 'vue-json-pretty/lib/styles.css';
   export default {
+    components: {
+      LineChart,
+      VueJsonPretty,
+    },
     data() {
       return {
+        dataRender: '',
         listHttps: [],  
         urlDatabase: "jdbc:mysql://103.195.236.45:3306/wordpress",
         jdbcDriverClass: "com.mysql.cj.jdbc.Driver",
@@ -119,18 +130,57 @@
         threadsValue: "1",
         isCheck: false,
         selectedJson: null,
-        isShowDetail: false,
-        isShowOVerview: true,
         dataResponse: "",
-         
+        btn: {
+          isShowDetail: true,
+          isShowChart: false,
+          isShowRender: false,
+        },
+        chartData: {
+          labels: [],
+          datasets: [
+            {
+              label: "Load Time",
+              borderColor: "#4bcc96",
+              borderWidth: 4,
+              data: [],
+              fill: false,
+              pointBackgroundColor: "#4bcc96",
+              pointRadius: 4, 
+              pointHoverRadius: 8,
+              pointHoverBorderColor: "#000"
+            },
+            {
+              label: "Load Time",
+              borderColor: "#53CCEC",
+              borderWidth: 4,
+              data: [],
+              fill: false,
+              pointBackgroundColor: "#53CCEC",
+              pointRadius: 4, 
+              pointHoverRadius: 8,
+              pointHoverBorderColor: "#000"
+            },
+          ]
+        },
+        chartOptions: {
+          maintainAspectRatio: false,
+          responsive: true,
+          tooltips: {
+            backgroundColor: "#0066ff!important",
+            titleFontColor: "#ffff",
+            bodyFontColor: "#ffff",
+            position: "nearest",
+            mode: "nearest",
+            intersect: 0,
+            bodySpacing: 4,
+            xPadding: 20,
+          }
+        },
       }
-    },
-    created() {
-      // this.getResponseHTTP();
     },
     methods: {
       async getResponseHTTP() {
-        this.isInputEmpty();
         this.dataResponse = ''
         this.selectedJson = ''  
         this.$axios({
@@ -153,17 +203,10 @@
             console.log(Arr)
             this.listHttps = Arr;
             this.isCheck = true;
+            this.HandleChartRender()
             this.DisplayData();
           }
         }).then(({ data }) => Promise.resolve(data));
-      },
-      handleDetail() {
-      this.isShowDetail = true;
-      this.isShowOVerview = false;
-      },
-      handleOverview() {
-        this.isShowDetail = false;
-        this.isShowOVerview = true;
       },
       DisplayData() {
         this.listHttps.forEach((d) => {
@@ -174,9 +217,36 @@
       SelectJSON(json) {  
       this.selectedJson = json;
       },
-      isInputEmpty(value) {
-        return !value.trim();
-      }
+      handleDetail() {
+        this.btn.isShowDetail = true
+        this.btn.isShowChart = false
+        this.btn.isShowRender = false
+      },
+      handleChart() {
+        this.btn.isShowDetail = false
+        this.btn.isShowChart = true
+        this.btn.isShowRender = false
+      },
+      handleRender() {
+        this.btn.isShowDetail = false
+        this.btn.isShowChart = false
+        this.btn.isShowRender = true
+      }, 
+      HandleChartRender() {
+      this.chartData.labels = []
+      this.chartData.datasets[0].data = []
+      
+      this.listHttps.forEach((d) => {
+        this.chartData.datasets[0].data.push( parseInt(d.load_time))
+        this.chartData.datasets[1].data.push( parseInt(d.connect_time))
+        this.chartData.labels.push(d.thread_name)
+      })
+      
+      console.log(this.chartData.labels, "dong11")
+      console.log(this.chartData.datasets[0].data, "dong12")
+      this.dataRender = this.listHttps[0]?.data
+    },
+
       
   }
   }
@@ -251,9 +321,9 @@
         }
       }
     }
-  
+    
     &__result {
-      
+    
       &__header {
         font-size: 28px;
         font-weight: 600;
@@ -264,29 +334,36 @@
   
       &__content {
         display: flex;
-        border: 1px solid #000;
-        border-radius: 6px;
   
         .col-2 {
           column-gap: 24px;
           width: 50%;
-          padding: 16px;
-          border-right: 1px solid #000;
           max-height: 500px;
           overflow: auto;
+  
+  
           
           ul {
             list-style: none;         
               li {
-                margin: 8px 0;
+                padding: 8px 0;
                 border-bottom: 1px solid #9999;
                 display: -webkit-box;
                 -webkit-box-orient: vertical;
                 overflow: hidden;
                 -webkit-line-clamp: 2;
                 cursor: pointer;
-                
-              }      
+                display: flex;
+                justify-items: center;
+                align-items: center;
+                gap: 8px;
+                font-size: 16px;
+              }     
+              
+              li:hover {
+                color: #407F3E;
+                font-weight: 600;
+              }
           }
   
           .col__btn {
@@ -302,12 +379,24 @@
   
           .col__item {
             &__detail {
-            
+              display: flex;
+              flex-direction: row;
+              flex-wrap: wrap;
+              width: 100%;
+              gap: 10px;
+              padding-left: 24px;
+              
+              
               p {
-                font-size: 16px;
-                font-weight: 400;
+                text-align: center;
+                background-color: #F4F4F4;
+                padding: 12px 8px;
+                font-size: 17px;
+                font-weight: 500;
                 line-height: 24px;
-                color: #EE6457;
+                color: #f75142;
+                width: 48%;
+                border-radius: 6px;
     
                 span {
                   font-weight: 500;
@@ -353,28 +442,97 @@
           cursor: pointer;
         }
       }
+  
+      &__btn {
+        margin-bottom: 24px;
+        
+        button {
+          font-size: 16px;
+          font-weight: 600;
+          color: #000;
+          padding: 10px 18px;
+          border-radius: 10px;
+          border: 1px solid #53CCEC;
+          outline: none;
+          margin: 0 6px;
+          background-color: #ffff;
+          cursor: pointer;
+          min-width: 106px;
+          
+        }
+        button:hover {
+          background-color: #53CCEC;
+          color: #ffff;
+        }
+      }
+  
+      &__overview {
+        display: flex;
+        width: 100%;
+        align-items: center;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 16px;
+        align-items: center;
+        justify-content: center;
+        p {
+          text-align: center;
+          background-color: #F4F4F4;
+          padding: 12px 8px;
+          font-size: 17px;
+          font-weight: 500;
+          line-height: 24px;
+          color: #f75142;
+          width: 23%;
+          border-radius: 6px;
+  
+          span {
+            font-weight: 500;
+            color: #000;
+          }
+        }
+      }
+  
+      &__chart {
+        
+      }
+  
+      &__render {
+        padding: 16px!important;
+        iframe {
+          width: 100%;
+          height: 100vh;
+          border: none;
+        }
+      }
     }
+  
+  }
+
+  .active {
+    background-color: #53CCEC!important;
+    color: #ffff!important;
+    border: none !important;
   }
   
-  .active {
-    color: #0066ff!important;
-    text-decoration: underline!important;
+  .container__global {
+    border-radius: 10px;
+    background-color: #fff;
+    box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+    -webkit-box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+    -moz-box-shadow: -1px 1px 44px -33px rgba(129,124,124,0.44);
+    padding: 24px;
   }
   
   .selected {
-    color: #EE6457;
+    color: #407F3E;
+    font-weight: 600;
+  
   }
-
-  .error {
-    color: red;
-    font-size: 15px;
-    line-height: 18px;
-    font-weight: 500;
-    margin-top: 4px;
-    margin-bottom: -18px;
+  
+  .line-chart {
+    width: 100%;
+    height: 50vh;
   }
-
-  .error-border {
-    border: 1px solid red!important;;
-  }
+  
   </style>

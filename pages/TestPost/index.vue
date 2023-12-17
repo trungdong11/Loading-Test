@@ -4,10 +4,8 @@
             <div class="container__item btn ">
                 <input v-model="urlValue" type="text" placeholder="Enter the url" />
                 <select class="form-control" v-model="methodSelected">
-                  <option selected value="HttpMVC">Http MVC</option>
-                  <option value="HttpsMVC">Https</option>
-                  <option value="HttpAPI">Http API</option>
-                  <option value="HttpsAPI">Https API</option>
+                  <option selected value="HttpMVC">Use MVC</option>
+                  <option value="HttpAPI">Use API</option>
                 </select>
                 <button @click="startTest">Start test</button>
             </div>
@@ -108,32 +106,7 @@
             value: this.keyValuePairList.map(i => i.value)
         };
         this.$axios({
-          url: `http://localhost:8080/api/v1/http-methods/post/mvc/http?url=${this.urlValue}&threads=${this.threadsValue}`,
-          data: requestBody,
-          headers: {
-            'accept': '*',  
-            'content-type': 'application/json'
-          },
-          method: 'POST',
-          onDownloadProgress: progressEvent => {
-            const xhr = progressEvent?.target
-            const dataString = xhr.responseText.replace(/data:/g, '');
-            const lines = dataString.split('\n');
-            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-            const Arr = filteredArray.map(line => JSON.parse(line));
-            // console.log(Arr)
-            this.listHttps = Arr;
-            this.isCheck = true;
-          }
-        }).then(({ data }) => Promise.resolve(data));
-      },
-      async methodMVCHTTPs() {
-        const requestBody = {
-            key: this.keyValuePairList.map(i => i.key),
-            value: this.keyValuePairList.map(i => i.value)
-        };
-        this.$axios({
-          url: `http://localhost:8080/api/v1/http-methods/post/mvc/https?url=${this.urlValue}&threads=${this.threadsValue}`,
+          url: `http://localhost:8080/api/v1/http-methods/post/mvc/?url=${this.urlValue}&threads=${this.threadsValue}`,
           data: requestBody,
           headers: {
             'accept': '*',  
@@ -158,32 +131,7 @@
             value: this.keyValuePairList.map(i => i.value)
         };
         this.$axios({
-          url: `http://localhost:8080/api/v1/http-methods/post/api/http?url=${this.urlValue}&threads=${this.threadsValue}`,
-          data: requestBody,
-          headers: {
-            'accept': '*',  
-            'content-type': 'application/json'
-          },
-          method: 'POST',
-          onDownloadProgress: progressEvent => {
-            const xhr = progressEvent?.target
-            const dataString = xhr.responseText.replace(/data:/g, '');
-            const lines = dataString.split('\n');
-            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-            const Arr = filteredArray.map(line => JSON.parse(line));
-            // console.log(Arr)
-            this.listHttps = Arr;
-            this.isCheck = true;
-          }
-        }).then(({ data }) => Promise.resolve(data));
-      },
-      async methodAPIHTTPs() {
-        const requestBody = {
-            key: this.keyValuePairList.map(i => i.key),
-            value: this.keyValuePairList.map(i => i.value)
-        };
-        this.$axios({
-          url: `http://localhost:8080/api/v1/http-methods/post/api/https?url=${this.urlValue}&threads=${this.threadsValue}`,
+          url: `http://localhost:8080/api/v1/http-methods/post/api/?url=${this.urlValue}&threads=${this.threadsValue}`,
           data: requestBody,
           headers: {
             'accept': '*',  
@@ -206,15 +154,9 @@
         if(this.methodSelected === 'HttpMVC')
         {
           this.methodMVCHTTP();
-        }else if(this.methodSelected === "HttpsMVC")
-        {
-          this.methodMVCHTTPs();
         }else if(this.methodSelected === "HttpAPI")
         {
           this.methodAPIHTTP();
-        }else if(this.methodSelected === "HttpsAPI")
-        {
-          this.methodAPIHTTPs();
         }
         
     },
