@@ -167,8 +167,6 @@ export default {
       isCheck: false,
       selectedJson: null,
       methodSelected: "Http",
-      listLoadTime: [],
-      listThreadName: [],
       chartOptions: {
         responsive: true,
         maintainAspectRatio: false, 
@@ -244,6 +242,9 @@ export default {
     startTest() {
         this.selectedJson = null
         this.getResponseHTTP();
+    },
+    inputValidate() {
+      this.urlValue = ""
     },
     SelectJSON(json) {  
       this.selectedJson = json;

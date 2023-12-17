@@ -7,7 +7,7 @@
             class="container__header"
             
             >
-                <h2>PBL WebSite Load Test</h2>
+                <!-- <h2>PBL WebSite Load Test</h2> -->
                 <!-- <p>Enter a URL to test the page load time, analyze it, and find bottlenecks.</p> -->
             </div>
             <div class="container__input">
@@ -62,13 +62,8 @@ export default {
 
 .container__header {
     text-align: center;
-    padding: 36px 0 0 0;
     color: #ffff;
-    h2{
-      font-size: 42px;
-      font-weight: 500;
-      margin-bottom: 16px;
-    }
+
 
     p {
       font-size: 20px;
