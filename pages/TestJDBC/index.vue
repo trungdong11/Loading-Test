@@ -76,7 +76,7 @@
                       <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                       <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                       <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
-                      <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
+                      <p><span>Header size:  </span>{{ selectedJson.header_size }} bytes</p>
                       <p><span>Body size:  </span>{{ selectedJson.body_size }}</p>
                       <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                       <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
@@ -98,6 +98,7 @@
               </div>
               <div class="container__result__renderData container__global" v-if="btn.isShowRender">
                 <vue-json-pretty :data="dataRender" />
+                <!-- {{ dataRender }} -->
               </div>
               
             </div>
@@ -244,7 +245,7 @@
       
       console.log(this.chartData.labels, "dong11")
       console.log(this.chartData.datasets[0].data, "dong12")
-      this.dataRender = this.listHttps[0]?.data
+      this.dataRender = JSON.parse(JSON.stringify(this.listHttps[0]?.data))
     },
 
       

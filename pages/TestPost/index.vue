@@ -70,7 +70,7 @@
                       <p><span>Server Host:  </span>{{ selectedJson.server_host }}</p>
                       <p><span>Server Post:  </span>{{ selectedJson.server_port }}</p>
                       <p><span>Keep Alive:  </span>{{ selectedJson.keep_alive }}</p>
-                      <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }} byte</p>
+                      <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }} bytes</p>
                       <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                       <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                       <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
@@ -78,7 +78,7 @@
                       <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                       <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                       <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
-                      <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
+                      <p><span>Header size:  </span>{{ selectedJson.header_size }} bytes</p>   
                       <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                       <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                       <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>
@@ -99,7 +99,7 @@
                 <p><span>Time taken for test:  </span>{{ total.callApi }} ms</p>
                 <p><span>Non-2xx responses: </span>{{total.nonResponse}}</p>
                 <p><span>Keep-alive request: </span>{{total.keepAliveRequest}}</p>
-                <p><span>HTML Transferred: </span>{{total.htmlTransfer}} byte</p>
+                <p><span>HTML Transferred: </span>{{total.htmlTransfer}} bytes</p>
                 <p><span>Connect Time min: </span>{{total.connectTime.min}} ms</p>
                 <p><span>Connect Time max: </span>{{total.connectTime.max}} ms</p>
                 <p><span>Connect Time avg: </span>{{total.connectTime.avg}} ms</p>
@@ -109,7 +109,7 @@
                 <p><span>Latency Time min: </span>{{total.Latency.min}} ms</p>
                 <p><span>Latency Time max: </span>{{total.Latency.max}} ms</p>
                 <p><span>Latency Time avg: </span>{{total.Latency.avg}} ms</p>
-                <p><span>Throughput: </span>{{total.throughput}} s</p>
+                <p><span>Throughput: </span>{{total.throughput}} Request/s</p>
               </div>
               <div class="container__result__chart container__global" v-if="isShowChart">
                 <line-chart
