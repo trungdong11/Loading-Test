@@ -20,6 +20,7 @@ export default {
   css: [
     "~/static/assets/css/global.css",
     "~/static/assets/font/roboto.css",
+    "~assets/css/global.css",
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
