@@ -43,7 +43,7 @@
                         </div>
                         <input type="text" v-model="urlValue" class="input__value" placeholder="Enter URL (Website, API): i.e. https://api.example.com/users">
                         <div class="container__content__body__above__input__bottom">
-                            <input type="text" v-model="threadsValue" class="input__value" placeholder="ENTER THREAD QUANTITY">
+                            <input type="text" v-model="virtual_users" class="input__value" placeholder="ENTER THREAD QUANTITY">
                             <input type="text" v-model="iterationValue" class="input__value" placeholder="ENTER ITERATION QUANTITY">
                         </div>
                     </div>
@@ -144,7 +144,7 @@
             </div>
             
         </div>
-       <div class="container__btn" @click="getResponseHTTP()">
+       <div class="container__btn" @click="fetchAndStoreData">
             <span>EXECUTE TEST</span>
             <img src="~assets/icons/arrow-right.svg" alt="">
        </div>
@@ -152,6 +152,7 @@
 </template>
 
 <script>
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
     data() {
@@ -179,16 +180,21 @@ export default {
             },
             listResponses: [],  
             urlValue: "",
-            iterationValue: "",
-            threadsValue: "",
+            iterationValue: 0,
+            virtual_users: "",
+            durations: 0,
             ramup: 0,
+            
         }
     },
     created() {
         this.selectedOption = this.options[0];
     },
+    
     methods: {
-        
+        ...mapActions({
+            apiData: 'loadtest/fetchData',
+        }),
         toggleHeader() {
             this.check.header = !this.check.header
             this.countList = this.keyValueList.length
@@ -216,35 +222,32 @@ export default {
                 this.keyValueList.splice(index, 1);
                 this.countList--
             }
-        },
-        async getResponseHTTP() {
+        }, 
+        async fetchAndStoreData() {
+            console.log('Threads:', this.virtual_users);
+            console.log('Iterations:', this.iterationValue);
+            console.log('URL:', this.urlValue);
+            console.log('Ramp Up:', this.ramup);
+            console.log(this.apiData, "function")
+       
             const requestBody = {
                 key_headers: [""],
                 value_headers: [""]
             };
-            console.log("dong")
-            this.$axios({
-                url: `http://localhost:8080/api/v1/http-methods/get?threads=${this.threadsValue}&iterations=${this.iterationValue}&url=${this.urlValue}&ramp_up=${this.ramup}`,
-                data: requestBody,
-                headers: {
-                'accept': '*',
-                'content-type': 'application/json'    
-                },
-                method: 'POST',
-                onDownloadProgress: progressEvent => {
-                const xhr = progressEvent?.target
-                const dataString = xhr.responseText.replace(/data:/g, '');
-                const lines = dataString.split('\n');
-                const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-                const Arr = filteredArray.map(line => JSON.parse(line));
-                console.log(Arr, "arr")
-                const listResponses = Arr;
-                this.$emit('apiResponse', listResponses);
-                // console.log(this.listResponses)
+
+            this.apiData(
+                {
+                    virtual_users: this.virtual_users, 
+                    iterations: this.iterationValue, 
+                    url:this.urlValue, 
+                    ramp_up: this.ramup, 
+                    durations: this.durations,
+                    requestBody: requestBody
                 }
-                
-            }).then(({ data }) => Promise.resolve(data));
-        },
+            );
+
+            this.$router.push(`/resultTest?virtual_users=${this.virtual_users}&ramp_up=${this.ramup}&url=${this.urlValue}&durations=${this.durations}&iterations=${this.iterationValue}`)
+        }   
     }
 }
 </script>
