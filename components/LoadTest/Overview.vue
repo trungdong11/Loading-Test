@@ -104,24 +104,24 @@
                 <span class="sample">{{getData.length}} <span class="item-size">samples</span></span>
             </div>
             <div class="container__first__item">
-                <h3>Avg.Response Time</h3>
+                <h3>Avg.Load Time</h3>
                 <div class="line"></div>
                 <span class="avg">{{avg.responseTime}} <span class="item-size">ms</span></span>
             </div>
             <div class="container__first__item">
-                <h3>90% Response Time</h3>
+                <h3>90% Load Time</h3>
                 <div class="line"></div>
                 <span class="response-time">{{avg.responseNinety}} <span class="item-size">ms</span></span>
             </div>
             <div class="container__first__item">
-                <h3>95% Response Time</h3>
+                <h3>95% Load Time</h3>
                 <div class="line"></div>
                 <span class="response-time">{{avg.responseFive}} <span class="item-size">ms</span></span>
             </div>
             <div class="container__first__item">
                 <h3>ThroughPut</h3>
                 <div class="line"></div>
-                <span class="throughput">{{avg.throughput}} <span class="item-size">ms</span></span>
+                <span class="throughput">{{avg.throughput}} <span class="item-size">request/s</span></span>
             </div>
             <div class="container__first__item">
                 <h3>Error</h3>
@@ -130,14 +130,17 @@
             </div>
         </div>
         <div class="container__second bg-container">
-            <LineChart/>
-            
+            <dynamic-chart
+                :chartData="chartData"
+                :options="chartOptions"
+                class="line-chart"
+            />
         </div>
     </div>
 </template>
 
 <script>
-import LineChart from '~/components/Commons/LineChart.vue';
+import DynamicChart from '~/components/Commons/DynamicChart.vue';
 import { mapActions, mapGetters } from 'vuex'
 
 
@@ -166,11 +169,63 @@ export default {
                 responseFive: 0,
                 errorNumber: 0,
                 throughput: 0,
-            }
+            },
+            chartData: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "Load Time",
+                        borderColor: "#4bcc96",
+                        borderWidth: 4,
+                        data: [],
+                        fill: false,
+                        pointBackgroundColor: "#4bcc96",
+                        pointRadius: 4, 
+                        pointHoverRadius: 8,
+                        pointHoverBorderColor: "#000"
+                    },
+                    {
+                        label: "Connect time",
+                        borderColor: "#FFCB77",
+                        borderWidth: 4,
+                        data: [],
+                        fill: false,
+                        pointBackgroundColor: "#FFCB77",
+                        pointRadius: 4, 
+                        pointHoverRadius: 8,
+                        pointHoverBorderColor: "#000"
+                    },
+                    {
+                        label: "Latency",
+                        borderColor: "#FE6D73",
+                        borderWidth: 4,
+                        data: [],
+                        fill: false,
+                        pointBackgroundColor: "#FE6D73",
+                        pointRadius: 4, 
+                        pointHoverRadius: 8,
+                        pointHoverBorderColor: "#000"
+                    }
+                ],
+            },
+            chartOptions: {
+                maintainAspectRatio: false,
+                responsive: true,
+                tooltips: {
+                    backgroundColor: "#0066ff!important",
+                    titleFontColor: "#ffff",
+                    bodyFontColor: "#ffff",
+                    position: "nearest",
+                    mode: "nearest",
+                    intersect: 0,
+                    bodySpacing: 4,
+                    xPadding: 20,
+                }
+            },
         };
     },
     components: {
-        LineChart,
+        DynamicChart,
     },
     computed: {
         ...mapGetters({
@@ -180,9 +235,10 @@ export default {
     watch: {
         getData(newData, oldData) {
             if (newData.length > 0) {
-            console.log(this.getData, "dong dong")
+            // console.log(this.getData, "dong dong")
             this.handleRender(this.getData)
             this.handleResponse(this.getData)
+            this.handleChartRender(this.getData)
             }
         },
     },
@@ -221,12 +277,14 @@ export default {
             this.render.endTime = listResponses.slice(-1)[0].start_at
 
             const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
-            // console.log(listLoadTime)
+            console.log(listLoadTime)
             const responseNinety = parseInt(listResponses.length * 90 / 100)
+            console.log(responseNinety, "ninety")
             const responseNinetyFive = parseInt(listResponses.length * 95 / 100)
-            // console.log(responseNinety)
-            this.avg.responseNinety = listLoadTime[responseNinety]
-            this.avg.responseFive = listLoadTime[responseNinetyFive]
+            console.log(responseNinetyFive,"nityfive")
+            console.log(responseNinety)
+            this.avg.responseNinety = listLoadTime[responseNinety - 1]
+            this.avg.responseFive = listLoadTime[responseNinetyFive - 1]
             
             console.log(sumError, "numbererror")
             this.avg.errorNumber = (sumError * 100) / listResponses.length
@@ -259,7 +317,22 @@ export default {
                 }
             })
         },
-        
+        handleChartRender(listResponses) {
+            this.chartData.labels = []
+            this.chartData.datasets[0].data = []
+            this.chartData.datasets[1].data = []
+            this.chartData.datasets[2].data = []    
+            
+            listResponses.forEach((d) => {
+                this.chartData.datasets[0].data.push( parseInt(d.load_time))
+                this.chartData.datasets[1].data.push(parseInt(d.connect_time))
+                this.chartData.datasets[2].data.push(parseInt(d.latency))
+                this.chartData.labels.push(d.thread_name)
+            })
+            
+            console.log(this.chartData.labels, "dong11")
+            console.log(this.chartData.datasets[0].data, "dong12")
+        },
 
     }
 }
@@ -291,6 +364,7 @@ export default {
             align-items: center;
             gap: 26px;
             width: 100%;
+            
 
             &__list {
                 display: flex;
@@ -385,7 +459,6 @@ export default {
                 font-weight: 900;
                 line-height: 24px;
                 font-family: ag_stencilag_stencil;
-                
                 .item-size {
                     font-size: 16px;
                     font-weight: 500;
@@ -394,7 +467,6 @@ export default {
                     -webkit-text-fill-color: transparent;
                 }
             }
-           
             .sample {
                 background: linear-gradient(#6156fc,#6056fc);
                 -webkit-background-clip: text;
@@ -428,13 +500,18 @@ export default {
         padding: 24px;
         background-color: #fff;
         box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-
+        
+        .line-chart {
+            width: 100%;
+            height: 50vh;
+        }
     }
-
     .bg-container {
         border-radius: 8px;
     }
 
+
     
 }
+
 </style>

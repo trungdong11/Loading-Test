@@ -1,8 +1,8 @@
 <template>
-    <!-- <div class="result" > -->
-        <!-- <ToNewTest/> -->
-    <!-- </div> -->
-    <div class="container">
+    <!-- <div class="result" v-if="getData.length === 0.1 ">
+        <ToNewTest/>
+    </div> -->
+    <div class="container" >
         <div class="container__header">
             <div class="container__header__options">
                 <div class="container__header__options__item"
@@ -60,14 +60,11 @@
                 </div> -->
             </div>
         </div>
-        <div class="container__overview">
-            <Overview
-            v-if="isShow.overview"/>
-        </div>
-        <div class="container__insights">
-            <Insights
-            v-if="isShow.insights"/>
-        </div>
+            <Overview v-show="isShow.overview"/>
+            <Insights v-show="isShow.insights"/>
+            <Stats v-show="isShow.stats"/>
+            <Detail v-show="isShow.detail"/>
+            <Render v-show="isShow.render"/>
     </div>
     
 </template>
@@ -75,6 +72,10 @@
 import ToNewTest from '~/components/Commons/ToNewTest.vue';
 import Overview from '~/components/LoadTest/Overview.vue';
 import Insights from '~/components/LoadTest/Insights.vue';
+import Stats from '~/components/LoadTest/Stats.vue';
+import Detail from '~/components/LoadTest/Detail.vue';
+import Render from '~/components/LoadTest/Render.vue';
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
     data() {
@@ -92,6 +93,14 @@ export default {
         ToNewTest,
         Overview,
         Insights,
+        Stats,
+        Detail,
+        Render,
+    },
+    computed: {
+        ...mapGetters({
+            getData: 'loadtest/getData',
+        }),
     },
     methods: {
         handleOverview() {

@@ -110,7 +110,7 @@
   </template>
   
   <script>
-  import LineChart from '~/components/Commons/LineChart.vue'
+  import LineChart from '~/components/Commons/DynamicChart.vue'
   import VueJsonPretty from 'vue-json-pretty';
   import 'vue-json-pretty/lib/styles.css';
   export default {

@@ -1,8 +1,8 @@
 <script>
-import {Line} from "vue-chartjs"
+import {PolarArea} from "vue-chartjs"
 
 export default {
-    extends: Line,
+    extends: PolarArea,
     props: ["chartData", "options"],
     mounted() {
         this.renderChart(this.chartData, this.options); 
