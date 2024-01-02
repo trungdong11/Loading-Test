@@ -20,6 +20,7 @@ export default {
   css: [
     "~/static/assets/css/global.css",
     "~/static/assets/font/roboto.css",
+    "~assets/css/global.css",
   ],
 
   // Plugins to run before rendering page: https://go.nuxtjs.dev/config-plugins
@@ -39,7 +40,7 @@ export default {
   ],
 
   axios: {
-    baseURL: 'http://localhost:8080/api/v1',
+    baseURL: 'http://36.50.134.89:8080/api/v1',
     
   },
   // Build Configuration: https://go.nuxtjs.dev/config-build

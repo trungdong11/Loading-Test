@@ -1,35 +1,42 @@
 <template>
     <div class="sidebar-container">
-        <div class="sidebar-element" ref="sidebarEle">
             <div class="sidebar-main">
                 <div class="sidebar-header">
-                    <!-- <img class="header-logo" src="~/assets/img/Logo-sgo.png" alt=""> -->
-                    <div class="collapse-btn" @click="collapseSidebar()">
-                    
+                    <img class="header-logo" src="~/assets/icons/services.svg" alt="">
+                    <div class="sidebar__popup">
+                        <div class="sidebar__popup__list"   >
+                            <div class="sidebar__popup__list__img">
+                                <img src="~assets/icons/bar-chart.svg" alt="">
+                            </div>
+                            <div class="sidebar__popup__list__item">
+                                <h3>Loading Test</h3>
+                                <p>See how your website or APIs are doing under load</p>
+                            </div>
+                        </div>
+                        <div class="sidebar__popup__list">
+                            <div class="sidebar__popup__list__img">
+                                <img src="~assets/icons/line-chart.svg" alt="">
+                            </div>
+                            <div class="sidebar__popup__list__item">
+                                <h3>Jdbc Test</h3>
+                                <p>See how your website or APIs are doing under load</p>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <p class="dashboard-title">FEATURE</p>
+                
                 <div class="sidebar-list">
-                    <nuxt-link to="/TestLoading" class="sidebar-item" :class="{ 'active': pageParams.startsWith('/TestLoading') }">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                                d="M10.275 12q-.7 0-1.15-.525T8.8 10.25l.3-1.8q.2-1.075 1.013-1.763T12 6q1.1 0 1.913.688t1.012 1.762l.3 1.8q.125.7-.325 1.225T13.75 12h-3.475Zm-7.175.975q-.575.025-.988-.225t-.537-.775q-.05-.225-.025-.45t.125-.425q0 .025-.025-.1q-.05-.05-.25-.6q-.05-.3.075-.575T1.8 9.35l.05-.05q.05-.475.388-.8t.837-.325q.075 0 .475.1l.075-.025q.125-.125.325-.187T4.375 8q.275 0 .488.088t.337.262q.025 0 .038.013t.037.012q.35.025.612.212t.388.513q.05.175.038.338t-.063.312q0 .025.025.1q.175.175.275.388t.1.437q0 .1-.15.525q-.025.05 0 .1l.05.4q0 .525-.438.9t-1.062.375H3.1ZM20 13q-.825 0-1.413-.588T18 11q0-.3.088-.563t.237-.512l-.7-.625q-.25-.2-.088-.5T18 8.5h2q.825 0 1.413.588T22 10.5v.5q0 .825-.588 1.413T20 13ZM0 18v-1.575q0-1.1 1.113-1.763T4 14q.325 0 .625.013t.575.062q-.35.5-.525 1.075T4.5 16.375V18H0Zm6 0v-1.625q0-1.625 1.663-2.625t4.337-1q2.7 0 4.35 1T18 16.375V18H6Zm14-4q1.8 0 2.9.663t1.1 1.762V18h-4.5v-1.625q0-.65-.163-1.225t-.487-1.075q.275-.05.563-.062T20 14Z" />
-                          </svg>
-                        TestLoading
+                    <nuxt-link to="/resultTest" class="sidebar-item " :class="{ 'sidebar-active': pageParams == '/resultTest' }">
+                        <img src="~/assets/icons/bar-chart.svg" alt="">
+                        <p>Tests</p>
                     </nuxt-link>
-                    <nuxt-link to="/TestJDBC" class="sidebar-item" :class="{ 'active': pageParams.startsWith('/TestJDBC') }">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="22" height="22" viewBox="0 0 24 24">
-                            <path fill="currentColor"
-                                d="M10.275 12q-.7 0-1.15-.525T8.8 10.25l.3-1.8q.2-1.075 1.013-1.763T12 6q1.1 0 1.913.688t1.012 1.762l.3 1.8q.125.7-.325 1.225T13.75 12h-3.475Zm-7.175.975q-.575.025-.988-.225t-.537-.775q-.05-.225-.025-.45t.125-.425q0 .025-.025-.1q-.05-.05-.25-.6q-.05-.3.075-.575T1.8 9.35l.05-.05q.05-.475.388-.8t.837-.325q.075 0 .475.1l.075-.025q.125-.125.325-.187T4.375 8q.275 0 .488.088t.337.262q.025 0 .038.013t.037.012q.35.025.612.212t.388.513q.05.175.038.338t-.063.312q0 .025.025.1q.175.175.275.388t.1.437q0 .1-.15.525q-.025.05 0 .1l.05.4q0 .525-.438.9t-1.062.375H3.1ZM20 13q-.825 0-1.413-.588T18 11q0-.3.088-.563t.237-.512l-.7-.625q-.25-.2-.088-.5T18 8.5h2q.825 0 1.413.588T22 10.5v.5q0 .825-.588 1.413T20 13ZM0 18v-1.575q0-1.1 1.113-1.763T4 14q.325 0 .625.013t.575.062q-.35.5-.525 1.075T4.5 16.375V18H0Zm6 0v-1.625q0-1.625 1.663-2.625t4.337-1q2.7 0 4.35 1T18 16.375V18H6Zm14-4q1.8 0 2.9.663t1.1 1.762V18h-4.5v-1.625q0-.65-.163-1.225t-.487-1.075q.275-.05.563-.062T20 14Z" />
-                          </svg>
-                        TestJDBC
+                    <nuxt-link to="/newTest" class="sidebar-item" :class="{ 'sidebar-active': pageParams == '/newTest' }">
+                        <img src="~/assets/icons/add-test.svg" alt="">
+                        <p>Add test</p>
                     </nuxt-link>
-                   
                 </div>
 
             </div>
-        </div>
-
     </div>
 </template>
 <script>
@@ -45,123 +52,172 @@ export default {
         },
     },
     methods: {
-        collapseSidebar() {
-            const sidebarEle = this.$refs.sidebarEle;
-            console.log(sidebarEle)
-            if (sidebarEle) {
-                if (sidebarEle.classList.contains("collapse")) {
-                    sidebarEle.classList.remove("collapse")
-                } else {
-                    sidebarEle.classList.add("collapse")
-                }
-            }
-        },
+        
         
     }
 }
 </script>
 <style scoped>
-.count {
-    color: #ffff;
-    width: 20px;
-    height: 20px;
-    background-color: var(--primary-color);
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
-    font-weight: 600;
-    border-radius: 190px;
-    padding: 6px 0;
-
-}
-
-.count p {
-    font-size: 14px;
-    line-height: 10px;
-    text-align: center;
-    
-}
 .sidebar-element {
-    width: 180px;
+    width: 50px;
+}
+
+.sidebar-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100px;
+    height: 100%;
 }
 
 .sidebar-main {
-    width: 180px;
-    position: fixed;
-    height: 100vh;
-    top: 0;
-    left: 0;
-    background: #D1FAEC;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 38px;
+    height: 100%;
     padding-top: 16px;
     transition: width 225ms cubic-bezier(0.4, 0, 0.6, 1) 0ms;
-    overflow-x: hidden;
-    z-index: 501;
+    background-color: #f3f3f3;
+    box-shadow: 1px 1px 4px 1px rgba(161, 161, 161, 0.25) inset, -1px -1px 2px 0px rgba(176, 176, 176, 0.25) inset;
 }
 
-.sidebar-header {
+.sidebar__popup::after {
+    content: "";
+    position: absolute;
+    height: 20px;
+    width: 100px;
+    top: -16px;
+    left: 0px;
+}
+
+.sidebar__popup {
+    position: absolute;
+    background-color: #ffff;
+    box-shadow: 1px 1px 4px 1px rgba(161, 161, 161, 0.25) inset, -1px -1px 2px 0px rgba(176, 176, 176, 0.25) inset;
+    border-radius: 8px;
+    cursor: pointer;
+    z-index: 9999;
+    top: 54px;
+    left: -10px;
     display: flex;
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
-    padding-left: 24px;
-    margin-bottom: 20px;
+    min-width: 420px;
+    text-align: left;
+    display: none;
+}
+.sidebar__popup__list {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    padding: 24px;
+    border-radius: 8px;
+    border-left: 5px solid transparent;
+    transition: all .2s ease;
+}
+
+.sidebar__popup__list:hover {
+    border-left: 5px solid var(--primary-1);
+    background-color: #f5f5f5;
+    box-shadow: 1px 1px 4px 1px rgba(161, 161, 161, 0.25) inset, -1px -1px 2px 0px rgba(176, 176, 176, 0.25) inset;
+}
+
+.sidebar__popup__list:hover .sidebar__popup__list__item h3 {
+    color: var(--primary-1)
+}
+
+.sidebar__popup__list__img {
+    width: 48px;
+    height:48px;
+    background-color: #ffff;
+    border-radius: 8px;
+    border: 1px solid var(--neutral-400);
+    text-align: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar__popup__list__img > img {
+    width: 28px;
+    height: 28px;
+}
+
+.sidebar__popup__list__item{
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    
+    h3 {
+        font-size: 16px;
+        color: var(--neutral-500);
+        font-weight: 600;
+    }
+
+    p {
+        font-size: 14px;
+        color: var(--neutral-400);
+        font-weight: 400;
+    }
+}
+.sidebar-header {
+    text-align: center;
+    margin-top: 12px;
+    position: relative;
+    cursor: pointer;
+}
+
+.sidebar-header:hover .sidebar__popup {
+    display: block;
 }
 
 .header-logo {
-    width: 144px;
-    object-fit: cover;
-    height: 100px;
-}
-
-.collapse-btn {
-    height: 44px;
     width: 44px;
-    padding: 6px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin-right: 8px;
-}
-
-.collapse-btn:hover {
     height: 44px;
-    width: 44px;
-    cursor: pointer;
-    background: aliceblue;
-    border-radius: 50%;
 }
-
-.dashboard-title {
-    margin-left: 24px;
-    font-style: normal;
-    font-weight: 500;
-    line-height: 100%;
-    /* 12px */
-    color: #959FA3;
-    margin-bottom: 8px;
-}
-
 .sidebar-item {
+    justify-content: center;
+    text-align: center;
     display: flex;
-    gap: 15px;
-    padding: 10px 24px;
+    flex-direction: column;
+    gap: 4px;
+    padding: 10px 0;
     align-items: center;
-    width: 180px;
+    width: 80px;
     color: #626C70;
     text-decoration: none;
     border-left: 3px solid transparent;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-bottom: 8px;
+
+    p {
+        font-size: 14px;
+        font-weight: 500;
+        color: var(--neutral-500);
+    }
+}
+
+.sidebar-active {
+    background-color: #ffff;
+    border-left: 5px solid var(--primary-1);
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 }
 
 .sidebar-item:hover {
     cursor: pointer;
-    background: #F0F6FF;
+    background: #ffff;
     transition: 0.2s;
+    border-left: 5px solid var(--primary-1);
 }
-
+/*
 .active {
     background: #F0F6FF;
     border-left: 3px solid #0E5FD9;
     color: #191B1C;
 }
+*/
 
 .active svg {
     color: #0E5FD9;

@@ -129,7 +129,7 @@
   </template>
   
   <script>
-import LineChart from '~/components/Commons/LineChart.vue'
+import LineChart from '~/components/Commons/DynamicChart.vue'
 
   export default {
     components: {
@@ -434,7 +434,7 @@ import LineChart from '~/components/Commons/LineChart.vue'
         this.total.throughput = this.threadsValue / sumTime;
         console.log(this.total.throughput, "test time1") 
         this.total.throughput = parseFloat(this.total.throughput).toFixed(2);
-        console.log(this.total.throughput, "test time") 
+        // console.log(this.total.throughput, "test time") 
 
       }, 
     }

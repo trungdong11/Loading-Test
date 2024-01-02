@@ -2,7 +2,7 @@
     <div>
         <TopNavBar/>
         <div class="body-container">
-            <!-- <SideBar /> -->
+            <SideBar />
             <div class="nuxt-container">
                 <Nuxt />
             </div>
@@ -11,7 +11,6 @@
 </template>
 <script>
     import TopNavBar from '~/components/Layouts/TopNavBar';
-    // import Header from '~/components/Layouts/Header';
     import SideBar from '~/components/Layouts/SideBar.vue';
     export default {
         components: {
@@ -23,6 +22,8 @@
 <style scoped lang="css">
 .body-container {
     display: flex;  
+    margin-left: 100px;
+    padding: 24px;
 }
 .nuxt-container {
     width: 100%;
