@@ -195,16 +195,17 @@ export default {
                         label: "Response Code",
                         data: [],
                         backgroundColor: [
-                        'rgb(255, 99, 132)',
-                        'rgb(75, 192, 192)',
-                        'rgb(255, 205, 86)',
-                        'rgb(201, 203, 207)',
-                        'rgb(54, 162, 235)'
+                        '#407F3E',
+                        '#3376BC',
+                        '#FB6376',
+                        '#FF0035',
+                        'rgb(201, 203, 207)'
                         ]
                     },
                     
                 ],
             },
+            listRender: [],
         };
     },
     components: {
@@ -281,7 +282,6 @@ export default {
             this.count.threeXX = countThreeXX
             this.count.fourXX = countFourXX
             this.count.fiveXX = countFiveXX
-            let countOtherXX = listResponses.length - (countTwoXX + countThreeXX + countFourXX + countFiveXX)
             this.count.otherXX = listResponses.length - (countTwoXX + countThreeXX + countFourXX + countFiveXX)
 
             this.total.sentData = totalSentData
@@ -305,7 +305,7 @@ export default {
 
             // console.log(sumError, "numbererror")
             this.avg.errorNumber = sumError
-            this.avg.errorPercent = (sumError * 100) / listResponses.length
+            this.avg.errorPercent = parseInt((sumError * 100) / listResponses.length)
 
 
             const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
@@ -323,8 +323,8 @@ export default {
             this.handleChart()
         },
         handleChart() {
-            this.chartData.datasets.data = []
-            this.chartData.datasets.data.push(this.count.twoXX, this.count.threeXX, this.count.fourXX, this.count.fiveXX, this.count.otherXX)
+            this.chartData.datasets[0].data = []
+            this.chartData.datasets[0].data.push(this.count.twoXX, this.count.threeXX, this.count.fourXX, this.count.fiveXX, this.count.otherXX)
         }
     },
 }

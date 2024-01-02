@@ -31,7 +31,7 @@
                     <p><span>Server Host:  </span>{{ selectedJson.server_host }}</p>
                     <p><span>Server Post:  </span>{{ selectedJson.server_port }}</p>
                     <p><span>Keep Alive:  </span>{{ selectedJson.keep_alive }}</p>
-                    <p><span>Html Transferred:  </span>{{ selectedJson.html_transferred }} byte</p>
+                    <p><span>Data Sent:  </span>{{ selectedJson.data_sent }} byte</p>
                     <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                     <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                     <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
@@ -39,7 +39,7 @@
                     <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                     <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                     <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
-                    <p><span>Header size:  </span>{{ selectedJson.header_size }} ms</p>
+                    <p><span>Data Received:  </span>{{ selectedJson.data_received }} ms</p>
                     <p><span>Response code:  </span>{{ selectedJson.response_code }}</p>
                     <p><span>Response message:  </span>{{ selectedJson.response_message }}</p>
                     <p><span>Request methods:  </span>{{ selectedJson.request_method }}</p>

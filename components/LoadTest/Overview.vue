@@ -52,7 +52,7 @@
                     <div class="container__header__body__list__item">
                         <div class="container__header__body__list__item__right">
                             <img src="~/assets/icons/server-host.svg" alt="">
-                            <p>Servers host</p>
+                            <p >Servers host</p>
                         </div>
                         <span>{{getData[0]?.server_host}}</span>
                     </div>
@@ -176,34 +176,34 @@ export default {
                     {
                         label: "Load Time",
                         borderColor: "#4bcc96",
-                        borderWidth: 4,
+                        borderWidth: 1,
                         data: [],
                         fill: false,
                         pointBackgroundColor: "#4bcc96",
-                        pointRadius: 4, 
-                        pointHoverRadius: 8,
+                        pointRadius: 0, 
+                        pointHoverRadius: 0,
                         pointHoverBorderColor: "#000"
                     },
                     {
                         label: "Connect time",
                         borderColor: "#FFCB77",
-                        borderWidth: 4,
+                        borderWidth: 1,
                         data: [],
                         fill: false,
                         pointBackgroundColor: "#FFCB77",
-                        pointRadius: 4, 
-                        pointHoverRadius: 8,
+                        pointRadius: 0, 
+                        pointHoverRadius: 0,
                         pointHoverBorderColor: "#000"
                     },
                     {
                         label: "Latency",
                         borderColor: "#FE6D73",
-                        borderWidth: 4,
+                        borderWidth: 1,
                         data: [],
                         fill: false,
                         pointBackgroundColor: "#FE6D73",
-                        pointRadius: 4, 
-                        pointHoverRadius: 8,
+                        pointRadius: 0, 
+                        pointHoverRadius: 0,
                         pointHoverBorderColor: "#000"
                     }
                 ],
@@ -219,7 +219,7 @@ export default {
                     mode: "nearest",
                     intersect: 0,
                     bodySpacing: 4,
-                    xPadding: 20,
+                    xPadding: 20,   
                 }
             },
         };
@@ -287,7 +287,7 @@ export default {
             this.avg.responseFive = listLoadTime[responseNinetyFive - 1]
             
             console.log(sumError, "numbererror")
-            this.avg.errorNumber = (sumError * 100) / listResponses.length
+            this.avg.errorNumber = parseInt((sumError * 100) / listResponses.length)
 
             let timeFirst = new Date(listResponses[0].start_at)
             console.log(timeFirst)

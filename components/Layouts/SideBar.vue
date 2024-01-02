@@ -4,7 +4,7 @@
                 <div class="sidebar-header">
                     <img class="header-logo" src="~/assets/icons/services.svg" alt="">
                     <div class="sidebar__popup">
-                        <div class="sidebar__popup__list">
+                        <div class="sidebar__popup__list"   >
                             <div class="sidebar__popup__list__img">
                                 <img src="~assets/icons/bar-chart.svg" alt="">
                             </div>

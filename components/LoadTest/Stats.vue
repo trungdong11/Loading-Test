@@ -124,10 +124,6 @@ export default {
                     sumError++;
                 }
 
-                if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) <= 600) {
-                    sumError++;
-                }
-
                 if(parseInt(d.connect_time) > maxConnectTime)
                 {
                     this.sum.maxConnectTime = parseInt(d.connect_time) 
@@ -154,15 +150,12 @@ export default {
             this.total.receiveData = totalReceiveData
 
             this.avg.errorNumber = sumError
-            this.avg.errorPercent = (sumError * 100) / listResponses.length
+            this.avg.errorPercent = parseInt((sumError * 100) / listResponses.length)
 
             this.avg.responseTime =  parseInt(sumReponseTime / count)
             this.avg.connectTime =  parseInt(sumConnectTime / count)
             this.avg.latency =  parseInt(sumLatency / count)
             
-
-            
-            this.avg.errorNumber = (sumError * 100) / listResponses.length
 
             let timeFirst = new Date(listResponses[0].start_at)
             console.log(timeFirst)

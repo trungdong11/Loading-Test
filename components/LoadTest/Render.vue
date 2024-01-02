@@ -7,17 +7,26 @@
         <div class="container__body">
             <iframe width="100%" height="100vh" :srcdoc="listDatas[0]?.response_body"></iframe>
         </div>
+        <!-- <div class="container__body" v-if="listDatas[0]?.response_body === 'underfined'">
+            <vue-json-pretty :data="renderData" />
+        </div> -->
     </div>
 </template>
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import VueJsonPretty from 'vue-json-pretty';
+import 'vue-json-pretty/lib/styles.css';
 
 export default {
     data() {
         return {
             listDatas: [],
+            renderData: '',
         }
+    },
+    components: {
+        VueJsonPretty
     },
     computed: {
         ...mapGetters({
@@ -30,6 +39,8 @@ export default {
             // console.log(this.getData, "dong dong")
                 this.listDatas = this.getData
                 console.log(this.listDatas, "render")
+                
+                // this.dataRender = JSON.parse(JSON.stringify(this.listDatas[0]?.data))
             }
         }
     },

@@ -1,8 +1,8 @@
 <template>
-    <!-- <div class="result" v-if="getData.length === 0.1 ">
+    <div class="result" v-if="getData.length === 0 ">
         <ToNewTest/>
-    </div> -->
-    <div class="container" >
+    </div>
+    <div class="container" v-else>
         <div class="container__header">
             <div class="container__header__options">
                 <div class="container__header__options__item"
@@ -51,13 +51,18 @@
                     </div>
                 </div>
             </div>
+            <div class="container__header__url">
+                {{ urlValue }}
+            </div>
             <div class="container__header__btn">
-                <div class="container__header__btn__running">
-                    Running...
-                </div>
-                <!-- <div class="container__header__btn__running completed">
+                <div class="container__header__btn__running completed"
+                    v-if="getData.length === (virtualUser * iterations) ">
                     Completed
-                </div> -->
+                </div>
+                <div class="container__header__btn__running" 
+                    v-else>
+                    Running...
+                </div>  
             </div>
         </div>
             <Overview v-show="isShow.overview"/>
@@ -86,7 +91,10 @@ export default {
                 stats: false,
                 detail: false,
                 render: false,
-            }
+            },
+            urlValue: '',
+            iterations: 1,
+            virtualUser: 0,
         };
     },
     components: {
@@ -101,6 +109,13 @@ export default {
         ...mapGetters({
             getData: 'loadtest/getData',
         }),
+    },
+    created() {
+        this.urlValue = this.$route.query.url
+        this.virtualUser = this.$route.query.virtual_users
+        if(this.$route.query.iterations > 0) {
+            this.iterations = this.$route.query.iterations
+        }
     },
     methods: {
         handleOverview() {
@@ -140,16 +155,17 @@ export default {
         }
     }
 }
-</script>
+</script>                                                                                                                                                                                                                                                                                                                                     
 
 <style scoped lang="scss">
 .container {
-    
+
     &__header {
         display: flex;
         align-items: center;
-        gap: 118px;
-        &__options {
+        gap: 8px;
+
+            &__options {
             border-radius: 4px;
             width: 638px;
             display: flex;
@@ -205,6 +221,17 @@ export default {
             }
         }
 
+        &__url {
+            background-color: #ffff;
+            border-radius: 8px;
+            box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+            padding: 8px 16px;
+            font-size: 15px;
+            font-weight: 500;
+            color: var(--neutral-400);
+            
+        }
+
         &__btn {
             
             &__running {
@@ -216,7 +243,6 @@ export default {
                 border-radius: 4px;
                 min-width: 148px;
                 text-align: center;
-                cursor: pointer;
             }
             .completed {
                 background: -webkit-linear-gradient(#11d924,#24b619);
