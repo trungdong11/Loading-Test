@@ -62,7 +62,9 @@
                                 </div>
                             </div>
                         </div>
-                        <input type="text" v-model="urlValue" class="input__value" placeholder="Enter URL (Website, API): i.e. https://api.example.com/users">
+                        <div class="input-fomr">
+                            <input type="text" v-model="urlValue" class="input__value" placeholder="Enter URL (Website, API): i.e. https://api.example.com/users">
+                        </div>
                         <div class="jdbc-test" v-if="check.jdbc">
                             <input type="text" v-model="jdbc_driver_class" class="input__value" placeholder="Enter jdbc_driver_class">
                             <input type="text" v-model="sql_statement" class="input__value" placeholder="Enter sql_statement">
@@ -92,6 +94,7 @@
                                 </div>  
                                 <input v-model="numberMethod" class="input__value" type="number" name="quantity" min="1">
                             </div>
+                            
                         </div>
                     </div>
                 </div>
@@ -121,6 +124,10 @@
                         <span>Post body</span>
                         <span>({{ countListPost }})</span>
                     </div>
+                    <div class="keep__alive">
+                        <input class="input__value" type="checkbox" v-model="checkKeepAlive">
+                        <label for="Keep-alive">Keep alive</label>
+                    </div>
                 </div>
                 <div class="container__content__post"
                     v-if="check.ramup"
@@ -133,8 +140,6 @@
                     >
                         <input v-model="ramup" type="text" placeholder="Ramp-up quantity">
                     </div>
-                    
-                    
                 </div>
                 <div class="container__content__post"
                     v-if="check.header && selectedOption.value !== 'JDBC'"
@@ -206,6 +211,7 @@ import { mapActions, mapGetters } from 'vuex'
 export default {
     data() {
         return {
+            checkKeepAlive: false,
             isOpenOptions: false,
             selectedOption: null,
             options: [
@@ -337,6 +343,7 @@ export default {
                 listValue.splice(index, 1);
                 countlist--
             }
+            console.log(this.checkKeepAlive, "keepalive")
         }, 
         async methodGetData() {       
             const requestBody = {
@@ -362,7 +369,8 @@ export default {
                     ramp_up:this.ramup, 
                     durations: this.durations,
                     requestBody: requestBody,
-                    requestBodyPost: requestBodyPost
+                    requestBodyPost: requestBodyPost,
+                    keepAlive: this.checkKeepAlive
                 }
             );
         },
@@ -390,7 +398,8 @@ export default {
                     ramp_up:    this.ramup, 
                     durations: this.durations,
                     requestBody: requestBody,
-                    requestBodyPost: requestBodyPost
+                    requestBodyPost: requestBodyPost,
+                    KeepAlive: this.checkKeepAlive
                 }
             );
         },
@@ -406,6 +415,7 @@ export default {
                     iterations: this.iterationValue, 
                     ramp_up:this.ramup, 
                     durations: this.durations,
+
                 }
             );
         },
@@ -513,6 +523,7 @@ export default {
                         align-items: center;
                         gap: 16px;
                     }
+                    
                 }
             }
             &__input:nth-child(1) {
@@ -673,6 +684,27 @@ export default {
     }
 }
 
+.keep__alive {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 8px;   
+    
+    input {
+        height: 28px;
+        width: 28px;
+        border-radius: 4px;
+        border: 1px solid #ccc;
+        outline: none;
+    }
+    label {
+        font-size: 16px;
+        color: var(--neutral-500);
+        font-weight: 600;
+        
+    }
+
+}
 .container__btn {
     margin-top: 36px;
     display: flex;

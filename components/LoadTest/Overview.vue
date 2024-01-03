@@ -164,16 +164,22 @@
                 class="line-chart"
             />
         </div>
+        <div class="container__second bg-container" v-if="rampUp > 0">
+            <dynamic-chart
+                :chartData="chartDataRamUP"
+                :options="chartOptionsRamUp"
+                class="line-chart"
+            />
+        </div>
     </div>
 </template>
 
 <script>
+import { formatDate } from 'timeUtils'
 import DynamicChart from '~/components/Commons/DynamicChart.vue';
 import { mapActions, mapGetters } from 'vuex'
 
-
 export default {
-    
     data() {
         return {
             virtual_users: 0, 
@@ -237,6 +243,35 @@ export default {
                     }
                 ],
             },
+            chartDataRamUP: {
+                labels: [],
+                datasets: [
+                    {
+                        label: "Virtual User",
+                        borderColor: "#4bcc96",
+                        borderWidth: 1,
+                        data: [],
+                        fill: false,
+                        pointBackgroundColor: "#4bcc96",
+                        pointRadius: 0, 
+                        pointHoverRadius: 0,
+                        pointHoverBorderColor: "#000",
+                        yAxisID: 'y-axis-1'
+                    },
+                    {
+                        label: "Connect time",
+                        borderColor: "#FFCB77",
+                        borderWidth: 1,
+                        data: [5, 5, 5, 5,5, 5, 5, 5],
+                        fill: false,
+                        pointBackgroundColor: "#FFCB77",
+                        pointRadius: 0, 
+                        pointHoverRadius: 0,
+                        pointHoverBorderColor: "#000",
+                        yAxisID: 'y-axis-1',
+                    }
+                ],
+            },
             chartOptions: {
                 maintainAspectRatio: false,
                 responsive: true,
@@ -251,6 +286,50 @@ export default {
                     xPadding: 20,   
                 }
             },
+            chartOptionsRamUp: {
+                maintainAspectRatio: false,
+                responsive: true,
+                tooltips: {
+                    backgroundColor: "#0066ff!important",
+                    titleFontColor: "#ffff",
+                    bodyFontColor: "#ffff",
+                    position: "nearest",
+                    mode: "nearest",
+                    intersect: 0,
+                    bodySpacing: 4,
+                    xPadding: 20,   
+                },
+                scales: {
+                yAxes: [
+                    {
+                      type: 'linear',
+                      display: true,
+                      position: 'left',
+                      id: 'y-axis-1',
+                      gridLines: {
+                        display: false
+                      },
+                      labels: {
+                        show: true
+                      }
+                    },
+                    {
+                      type: 'linear',
+                      display: true,
+                      position: 'right',
+                      id: 'y-axis-2',
+                      gridLines: {
+                        display: false
+                      },
+                      labels: {
+                        show: true
+                      }
+                    }
+                ]
+            }
+            },
+            listVirtualUser: [],
+            listTime: []
         };
     },
     components: {
@@ -270,6 +349,8 @@ export default {
             this.handleResponse(this.getData)
             this.handleChartRender(this.getData)
             this.handleErrorPercentJDBC(this.getData)
+            this.handleChartRampUp(this.getData)
+            this.countOccurrencesLoadTime(this.getData)
             }
         },
     },
@@ -303,9 +384,11 @@ export default {
             // console.log(listData, "listData")
             this.avg.responseTime =  parseInt(sumReponseTime / count)
             
-            this.render.startTime = listResponses[0].start_at
-            this.render.endTime = listResponses.slice(-1)[0].start_at
+            const start = new Date(parseInt(listResponses[0].start_at)) 
+            const end = new Date(parseInt(listResponses.slice(-1)[0].start_at))
 
+            this.render.startTime = formatDate(start,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
+            this.render.endTime = formatDate(end,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
             // const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
             const listLoadTime = this.mergeSort(listData)
             // console.log(listLoadTime, "listLoadTime")
@@ -321,9 +404,9 @@ export default {
             console.log(sumError, "numbererror")
             this.avg.errorNumber = parseInt((sumError * 100) / listResponses.length)
 
-            let timeFirst = new Date(listResponses[0].start_at)
+            let timeFirst = listResponses[0].start_at
             // console.log(timeFirst)
-            let timeLast = new Date(listResponses.slice(-1)[0].start_at)
+            let timeLast = listResponses.slice(-1)[0].start_at
             // console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             // console.log(loadTimeLast)
@@ -407,7 +490,83 @@ export default {
             }
 
             return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
-        }
+        },
+        countOccurrences(arr) {
+            const sortedArray = this.mergeSort(arr);
+            const occurrences = {};
+            const uniqueValues = [];
+            const countArray = [];
+
+            for (let i = 0; i < sortedArray.length; i++) {
+                const currentNumber = sortedArray[i];
+
+                if (!occurrences[currentNumber]) {
+                    let count = 1;
+                    while (sortedArray[i + 1] === currentNumber) {
+                        count++;
+                        i++;
+                    }
+                    occurrences[currentNumber] = count;
+
+                    uniqueValues.push(currentNumber);
+                    
+                    countArray.push(count);
+                }
+            }
+            
+            this.listVirtualUser = uniqueValues
+            this.listTime = countArray
+          
+        },
+        countOccurrencesLoadTime(arr) {
+            let data = new Map();
+            let listLoadTime = []
+
+            arr.forEach((d) => {
+                const key = formatDate((new Date(parseInt(d.start_at))), '#{g}:#{i}:#{s}');
+                
+                if (!data.has(key)) {
+                    data.set(key, [parseInt(d.load_time)]);
+                } else {
+                    let array = data.get(key);
+                    array.push(parseInt(d.load_time));
+                    data.set(key, array);
+                }
+            });
+
+            console.log(data, "map");
+            this.chartDataRamUP.datasets[1].data = []
+            data.forEach((value, key) => {
+                let sum = value.reduce((acc, cur) => acc + cur, 0);
+                let average = sum / value.length
+                console.log(`Key: ${key}, Sum: ${average}`);
+                listLoadTime.push(average)
+                // this.chartDataRamUP.datasets[1].data.push(average)
+
+            });
+            this.chartDataRamUP.datasets[1].data = listLoadTime
+            console.log(this.chartDataRamUP.datasets[1].data, "chart rampup")
+
+        },
+        handleChartRampUp(listResponses) {
+            let listStart = []
+            listResponses.forEach((d) => {
+                const resultTime = new Date(parseInt(d.start_at))
+                listStart.push(formatDate(resultTime,'#{g}:#{i}:#{s}'))
+            })
+
+            // console.log(listStart, "listStart")
+            this.countOccurrences(listStart)
+            this.chartDataRamUP.labels = this.listVirtualUser
+            this.chartDataRamUP.datasets[0].data = this.listTime
+            
+            console.log(this.listVirtualUser, "listVirtual")
+            console.log(this.listTime, "listTime")
+
+            // this.countOccurrences(listLoadTime)
+            
+        },
+        
     }
 }
 </script>

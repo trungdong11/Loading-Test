@@ -162,6 +162,7 @@
 </template>
 
 <script>
+import { formatDate } from 'timeUtils'
 import { mapActions, mapGetters } from 'vuex'
 import PolarAreaChart from '~/components/Commons/PolarAreaChart.vue';
 export default {
@@ -292,11 +293,11 @@ export default {
 
             this.avg.responseTime = parseInt(sumReponseTime / count)
 
-            this.total.standard = parseInt(totalStandard / listResponses.length)
+            this.total.standard = parseFloat(totalStandard / listResponses.length).toFixed(0)
 
-            let timeFirst = new Date(listResponses[0].start_at)
+            let timeFirst = listResponses[0].start_at
             // console.log(timeFirst)
-            let timeLast = new Date(listResponses.slice(-1)[0].start_at)
+            let timeLast = listResponses.slice(-1)[0].start_at
             // console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             // console.log(loadTimeLast)

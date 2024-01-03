@@ -1,5 +1,5 @@
 export const actions = {
-    async fetchDataGet({ commit }, { method, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost }) {
+    async fetchDataGet({ commit }, { method, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost, keepAlive }) {
       try {
         console.log("dong")
         const newObject = {
@@ -7,21 +7,25 @@ export const actions = {
           ...requestBodyPost
         }
         this.$axios({
-          url: `http://36.50.134.89:8080/api/v1/http-methods/${method}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}`,
+          url: `http://36.50.134.89:8080/api/v1/http-methods/${method}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}&is_keep_alive=${keepAlive}`,
           data: newObject,
-          headers: {
-            'accept': '*',
-            'content-type': 'application/json'
-          },
           method: 'POST',
           onDownloadProgress: progressEvent => {
-            const xhr = progressEvent?.target
-            const dataString = xhr.responseText.replace(/data:/g, '');
-            const lines = dataString.split('\n');
-            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-            const Arr = filteredArray.map(line => JSON.parse(line));
-            console.log(Arr, "tết")
-            commit('setApiData', Arr);
+              const xhr = progressEvent?.target
+              const dataString = xhr.responseText.replace(/data:/g, '');
+              const lines = dataString.split('\n');
+              
+              const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+            try {
+              
+              const Arr = filteredArray.map(line => JSON.parse(line));
+              console.log(Arr, "tết")
+              commit('setApiData', Arr);
+            }catch (error) {
+              // console.log(error, "loi")
+              console.log(filteredArray, "line")
+            }
+            
 
           }
         }).then(({ data }) => Promise.resolve(data));
@@ -29,14 +33,14 @@ export const actions = {
         console.error('Error fetching data:', error);
       }
     },
-    async fetchDataPost({ commit }, {option_post, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost }) {
+    async fetchDataPost({ commit }, {option_post, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost, keepAlive }) {
       try {
         const newObject = {
           ...requestBody, 
           ...requestBodyPost
         }
         this.$axios({
-          url: `http://36.50.134.89:8080/api/v1/http-methods/post/${option_post}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}`,
+          url: `http://36.50.134.89:8080/api/v1/http-methods/post/${option_post}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}&is_keep_alive=${keepAlive}`,
           data: newObject,
           headers: {
             'accept': '*',
@@ -44,14 +48,18 @@ export const actions = {
           },
           method: 'POST',
           onDownloadProgress: progressEvent => {
-            const xhr = progressEvent?.target
-            const dataString = xhr.responseText.replace(/data:/g, '');
-            const lines = dataString.split('\n');
-            const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-            const Arr = filteredArray.map(line => JSON.parse(line));
-            console.log(Arr, "tết")
-            commit('setApiData', Arr);
-
+            try { 
+              const xhr = progressEvent?.target
+              const dataString = xhr.responseText.replace(/data:/g, '');
+              const lines = dataString.split('\n');
+              const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
+              const Arr = filteredArray.map(line => JSON.parse(line));
+              console.log(Arr, "tết")
+              commit('setApiData', Arr);
+            }
+            catch(error) {
+              console.log(error, "loi")
+            }
           }
         }).then(({ data }) => Promise.resolve(data));
       } catch (error) {

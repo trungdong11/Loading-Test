@@ -35,7 +35,7 @@
                     <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                     <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                     <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
-                    <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
+                    <p><span>Start at:  </span>{{ new Date(selectedJson?.start_at) }}</p>
                     <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                     <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                     <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
@@ -54,7 +54,7 @@
                   <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                   <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                   <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
-                  <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
+                  <p><span>Start at:  </span>{{ new Date(selectedJson?.start_at) }}</p>
                   <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                   <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                   <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
@@ -70,13 +70,20 @@
 
 <script>
 import { mapActions, mapGetters } from 'vuex'
+import { formatDate } from 'timeUtils'
 
 export default {
     data() {
         return {
             selectedJson: '',
-            listDatas: []
+            listDatas: [], 
+            startAt: '', 
         }
+    },
+    filters: {
+      timeCreatedAt(value) {
+        return formatDate((new Date(value)),' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
+      },
     },
     computed: {
         ...mapGetters({
@@ -95,6 +102,10 @@ export default {
         SelectJSON(json) {  
             this.selectedJson = json;
         },
+        handleStart() {
+          this.startAt = formatDate((new Date(this.selectedJson.start_at)),' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
+          
+        }
     }
 }
 </script>
