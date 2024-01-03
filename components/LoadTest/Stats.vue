@@ -36,8 +36,10 @@
                         <td>{{sum.minLatency}}</td>
                         <td>{{sum.maxLatency}}</td>
                         <td>{{avg.latency}}</td>
-                        <td>{{avg.errorNumber}}</td>
-                        <td>{{avg.errorPercent}}</td>
+                        <td v-if="getData[0].data === undefined">{{avg.errorNumber}}</td>
+                        <td v-if="getData[0].data !== undefined">{{avg.errorNumberJDBC}}</td>
+                        <td v-if="getData[0].data === undefined">{{avg.errorPercent}}</td>
+                        <td v-if="getData[0].data !== undefined">{{avg.errorPercentJDBC}}</td>
                         <td>{{total.sentData}}</td>
                         <td>{{total.receiveData}}</td>
                     </tr>
@@ -62,6 +64,8 @@ export default {
                 responseFive: 0,
                 errorNumber: 0,
                 errorPercent: 0,
+                errorNumberJDBC: 0,
+                errorPercentJDBC: 0,
                 throughput: 0,
                 latency: 0,
                 connectTime: 0,
@@ -118,7 +122,7 @@ export default {
                 sumReponseTime += parseInt(d.load_time)
                 sumConnectTime += parseInt(d.connect_time)
                 sumLatency += parseInt(d.latency)
-                listData.push(d.load_time)
+                listData.push(parseInt(d.load_time))
 
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
                     sumError++;
@@ -166,9 +170,23 @@ export default {
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
             console.log(sumTime)
             
-            this.avg.throughput = parseInt((listResponses.length) / sumTime);
+            this.avg.throughput = parseFloat((listResponses.length) / sumTime).toFixed(1);
             console.log(this.avg.throughput, "test time") 
         }, 
+        handleErrorJDBC(listResponses) {
+            let sum = 0
+
+            if(this.getData[0].data !== undefined) {
+                listResponses.forEach((d) => {
+                    if(d.error_code !== '1') {
+                        sum++
+                    }
+                })
+
+                this.avg.errorNumberJDBC = sum
+                this.avg.errorPercentJDBC = parseInt((sum * this.getData.length) / 100)
+            }
+        }
     }
 }
 </script>

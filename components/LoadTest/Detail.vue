@@ -11,12 +11,12 @@
                     v-for="(listData, index) in listDatas" :key="index"
                     @click="SelectJSON(listData)" 
                     :class="{'selected' : selectedJson === listData}">
-                    <svg v-if="listData?.response_code === '200'" xmlns="http://www.w3.org/2000/svg"
+                    <svg v-if="(parseInt(listData?.response_code) >= 200 && parseInt(listData?.response_code) < 300) || (getData[0].data !== undefined)" xmlns="http://www.w3.org/2000/svg"
                      width="24" height="24" viewBox="0 0 24 24">
                       <path fill="#407F3E"
                        d="m10.6 13.8l-2.15-2.15q-.275-.275-.7-.275t-.7.275q-.275.275-.275.7t.275.7L9.9 15.9q.3.3.7.3t.7-.3l5.65-5.65q.275-.275.275-.7t-.275-.7q-.275-.275-.7-.275t-.7.275zM12 22q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
                     </svg>
-                    <svg  v-if="listData?.response_code != '200'"  xmlns="http://www.w3.org/2000/svg"
+                    <svg  v-else xmlns="http://www.w3.org/2000/svg"
                      width="22" height="22" viewBox="0 0 24 24">
                      <path fill="#D24150" d="m8.4 17l3.6-3.6l3.6 3.6l1.4-1.4l-3.6-3.6L17 8.4L15.6 7L12 10.6L8.4 7L7 8.4l3.6 3.6L7 15.6zm3.6 5q-2.075 0-3.9-.788t-3.175-2.137q-1.35-1.35-2.137-3.175T2 12q0-2.075.788-3.9t2.137-3.175q1.35-1.35 3.175-2.137T12 2q2.075 0 3.9.788t3.175 2.137q1.35 1.35 2.138 3.175T22 12q0 2.075-.788 3.9t-2.137 3.175q-1.35 1.35-3.175 2.138T12 22"/>
                     </svg>
@@ -25,7 +25,7 @@
                 </ul> 
             </div>
             <div class="col-2" >
-            <div class="col__item">
+            <div class="col__item" v-if="getData[0].data === undefined">
                 <div class="col__item__detail" v-if="selectedJson">
                     <p><span>Server Software:  </span>{{ selectedJson.server_software }}</p>
                     <p><span>Server Host:  </span>{{ selectedJson.server_host }}</p>
@@ -46,6 +46,23 @@
                 </div>
                 
             </div>
+            <div class="col__item" v-if="getData[0].data !== undefined">
+              <div class="col__item__detail" v-if="selectedJson">
+                  <p><span>Name Dbms:  </span>{{ selectedJson.name_dbms }}</p>
+                  <p><span>Version Dbms:  </span>{{ selectedJson.version_dbms }}</p>
+                  <p><span>Data Sent:  </span>{{ selectedJson.data_sent }} byte</p>
+                  <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
+                  <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
+                  <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
+                  <p><span>Start at:  </span>{{ selectedJson.start_at }}</p>
+                  <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
+                  <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
+                  <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
+                  <p><span>Data Received:  </span>{{ selectedJson.data_received }} ms</p>
+                  <p><span>Error code:  </span>{{ selectedJson.error_code }}</p>
+              </div>
+              
+          </div>
             </div>
         </div>
     </div>

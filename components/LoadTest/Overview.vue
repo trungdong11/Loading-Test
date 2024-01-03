@@ -33,12 +33,19 @@
                     </div>
                 </div>
                 <div class="container__header__body__list">
-                    <div class="container__header__body__list__item">
+                    <div class="container__header__body__list__item" v-if="getData[0].data === undefined">
                         <div class="container__header__body__list__item__right">
                             <img src="~/assets/icons/server.svg" alt="">
                             <p>Servers</p>
                         </div>
                         <span>{{getData[0]?.server_software}}</span>
+                    </div> 
+                    <div class="container__header__body__list__item" v-if="getData[0].data !== undefined">
+                        <div class="container__header__body__list__item__right">
+                            <img src="~/assets/icons/server.svg" alt="">
+                            <p>Content type</p>
+                        </div>
+                        <span>{{getData[0]?.content_type}}</span>
                     </div>  
                     <div class="container__header__body__list__item">
                         <div class="container__header__body__list__item__right">
@@ -48,7 +55,7 @@
                         <span>{{rampUp}} s</span>
                     </div>
                 </div>
-                <div class="container__header__body__list">
+                <div class="container__header__body__list" v-if="getData[0].data === undefined">
                     <div class="container__header__body__list__item">
                         <div class="container__header__body__list__item__right">
                             <img src="~/assets/icons/server-host.svg" alt="">
@@ -62,6 +69,22 @@
                             <p>Server port</p>
                         </div>
                         <span>{{getData[0]?.server_port}}</span>
+                    </div>
+                </div>
+                <div class="container__header__body__list" v-if="getData[0].data !== undefined">
+                    <div class="container__header__body__list__item">
+                        <div class="container__header__body__list__item__right">
+                            <img src="~/assets/icons/server-host.svg" alt="">
+                            <p >Name Dbms</p>
+                        </div>
+                        <span>{{getData[0]?.name_dbms}}</span>
+                    </div>
+                    <div class="container__header__body__list__item">
+                        <div class="container__header__body__list__item__right">
+                            <img src="~/assets/icons/server-post.svg" alt="">
+                            <p>Version Dbms</p>
+                        </div>
+                        <span>{{getData[0]?.version_dbms}}</span>
                     </div>
                 </div>
                 <div class="container__header__body__list">
@@ -80,7 +103,7 @@
                         <span>{{render.endTime}}</span>
                     </div>
                 </div>
-                <div class="container__header__body__list">
+                <div class="container__header__body__list" v-if="getData[0].data === undefined">
                     <div class="container__header__body__list__item">
                         <div class="container__header__body__list__item__right">
                             <img src="~/assets/icons/start.svg" alt="">
@@ -123,10 +146,15 @@
                 <div class="line"></div>
                 <span class="throughput">{{avg.throughput}} <span class="item-size">request/s</span></span>
             </div>
-            <div class="container__first__item">
+            <div class="container__first__item" v-if="getData[0].data === undefined">
                 <h3>Error</h3>
                 <div class="line"></div>
                 <span class="error">{{avg.errorNumber}} <span class="item-size">%</span></span>
+            </div>
+            <div class="container__first__item" v-if="getData[0].data !== undefined">
+                <h3>Error</h3>
+                <div class="line"></div>
+                <span class="error">{{avg.errorPercentJDBC}} <span class="item-size">%</span></span>
             </div>
         </div>
         <div class="container__second bg-container">
@@ -169,6 +197,7 @@ export default {
                 responseFive: 0,
                 errorNumber: 0,
                 throughput: 0,
+                errorPercentJDBC: 0,
             },
             chartData: {
                 labels: [],
@@ -236,9 +265,11 @@ export default {
         getData(newData, oldData) {
             if (newData.length > 0) {
             // console.log(this.getData, "dong dong")
+            console.log(this.getData[0].data, "testst data")
             this.handleRender(this.getData)
             this.handleResponse(this.getData)
             this.handleChartRender(this.getData)
+            this.handleErrorPercentJDBC(this.getData)
             }
         },
     },
@@ -248,7 +279,6 @@ export default {
        this.rampUp =  this.$route.query.ramp_up
        this.durations = this.$route.query.durations
        this.iterations = this.$route.query.iterations
-        console.log(this.getData, "testst")
     },
     methods: {
         
@@ -262,27 +292,29 @@ export default {
                 console.log(d.response_code, "code")
                 count++
                 sumReponseTime += parseInt(d.load_time)
-                listData.push(d.load_time)
+                listData.push(parseInt(d.load_time))
 
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) <= 600) {
                     sumError++;
                 }
 
             })
-            console.log(count, "count")
-            console.log(listData, "listData")
+            // console.log(count, "count")
+            // console.log(listData, "listData")
             this.avg.responseTime =  parseInt(sumReponseTime / count)
             
             this.render.startTime = listResponses[0].start_at
             this.render.endTime = listResponses.slice(-1)[0].start_at
 
-            const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
-            console.log(listLoadTime)
+            // const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
+            const listLoadTime = this.mergeSort(listData)
+            // console.log(listLoadTime, "listLoadTime")
+
             const responseNinety = parseInt(listResponses.length * 90 / 100)
-            console.log(responseNinety, "ninety")
+            // console.log(responseNinety, "ninety")
             const responseNinetyFive = parseInt(listResponses.length * 95 / 100)
-            console.log(responseNinetyFive,"nityfive")
-            console.log(responseNinety)
+            // console.log(responseNinetyFive,"nityfive")
+            // console.log(responseNinety)
             this.avg.responseNinety = listLoadTime[responseNinety - 1]
             this.avg.responseFive = listLoadTime[responseNinetyFive - 1]
             
@@ -290,16 +322,16 @@ export default {
             this.avg.errorNumber = parseInt((sumError * 100) / listResponses.length)
 
             let timeFirst = new Date(listResponses[0].start_at)
-            console.log(timeFirst)
+            // console.log(timeFirst)
             let timeLast = new Date(listResponses.slice(-1)[0].start_at)
-            console.log(timeLast)
+            // console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
-            console.log(loadTimeLast)
+            // console.log(loadTimeLast)
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
-            console.log(sumTime)
+            // console.log(sumTime)
             
-            this.avg.throughput = parseInt((listResponses.length) / sumTime);
-            console.log(this.avg.throughput, "test time") 
+            this.avg.throughput = parseFloat((listResponses.length) / sumTime).toFixed(1);
+            // console.log(this.avg.throughput, "test time") 
         },  
         handleResponse(listResponses) {
             listResponses.some((item) => {
@@ -330,10 +362,52 @@ export default {
                 this.chartData.labels.push(d.thread_name)
             })
             
-            console.log(this.chartData.labels, "dong11")
-            console.log(this.chartData.datasets[0].data, "dong12")
+            // console.log(this.chartData.labels, "dong11")
+            // console.log(this.chartData.datasets[0].data, "dong12")
         },
+        handleErrorPercentJDBC(listResponses) {
+            let sum = 0
+            if(listResponses[0].data !== undefined) {
+                listResponses.forEach((d) => {
+                    if(d.error_code !== '1') {
+                        sum++
+                    }
+                })
 
+                this.avg.errorPercentJDBC = parseInt((sum * this.getData.length) / 100)
+            }
+        },
+        mergeSort(arr) {
+            if (arr.length <= 1) {
+                return arr;
+            }
+
+            var middle = Math.floor(arr.length / 2);
+            var left = arr.slice(0, middle);
+            var right = arr.slice(middle);
+
+            left = this.mergeSort(left);
+            right = this.mergeSort(right);
+
+            return this.merge(left, right);
+        },
+        merge(left, right) {
+            var result = [];
+            var leftIndex = 0;
+            var rightIndex = 0;
+
+            while (leftIndex < left.length && rightIndex < right.length) {
+                if (left[leftIndex] < right[rightIndex]) {
+                    result.push(left[leftIndex]);
+                    leftIndex++;
+                } else {
+                    result.push(right[rightIndex]);
+                    rightIndex++;
+                }
+            }
+
+            return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
+        }
     }
 }
 </script>
