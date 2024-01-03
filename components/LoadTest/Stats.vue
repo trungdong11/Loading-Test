@@ -107,10 +107,8 @@ export default {
             let sumError = 0
             let sumReponseTime = 0;
             let listData = []
-            let minConnectTime = Infinity
-            let maxConnectTime = 0
-            let minLatency = Infinity
-            let maxLatency = 0
+            let listDataConnection = []
+            let listDataLatency = []
             let sumConnectTime = 0
             let sumLatency = 0
             let totalSentData = 0
@@ -123,32 +121,25 @@ export default {
                 sumConnectTime += parseInt(d.connect_time)
                 sumLatency += parseInt(d.latency)
                 listData.push(parseInt(d.load_time))
+                listDataConnection.push(parseInt(d.connect_time))
+                listDataLatency.push(parseInt(d.latency))
 
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
                     sumError++;
                 }
 
-                if(parseInt(d.connect_time) > maxConnectTime)
-                {
-                    this.sum.maxConnectTime = parseInt(d.connect_time) 
-                }
-                if(parseInt(d.connect_time) < minConnectTime) 
-                {
-                    this.sum.minConnectTime = parseInt(d.connect_time)
-                }
-
-                if(d.latency > maxLatency)
-                {
-                    this.sum.maxLatency = parseInt(d.latency) 
-                }
-                if(d.latency < minLatency) 
-                {
-                    this.sum.minLatency = parseInt(d.latency)
-                }
-
                 totalSentData += parseInt(d.data_sent)
                 totalReceiveData += parseInt(d.data_received)
             })
+
+            const listConnection = this.mergeSort(listDataConnection)
+            const listLatency = this.mergeSort(listDataLatency)
+
+            this.sum.minConnectTime = listConnection[0]
+            this.sum.maxConnectTime = listConnection.slice(-1)[0]
+
+            this.sum.minLatency = listLatency[0]
+            this.sum.maxLatency = listLatency.slice(-1)[0]
 
             this.total.sentData = totalSentData
             this.total.receiveData = totalReceiveData
@@ -161,9 +152,9 @@ export default {
             this.avg.latency =  parseInt(sumLatency / count)
             
 
-            let timeFirst = new Date(listResponses[0].start_at)
+            let timeFirst = listResponses[0].start_at
             console.log(timeFirst)
-            let timeLast = new Date(listResponses.slice(-1)[0].start_at)
+            let timeLast = listResponses.slice(-1)[0].start_at
             console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             console.log(loadTimeLast)
@@ -186,6 +177,37 @@ export default {
                 this.avg.errorNumberJDBC = sum
                 this.avg.errorPercentJDBC = parseInt((sum * this.getData.length) / 100)
             }
+        },
+        mergeSort(arr) {
+            if (arr.length <= 1) {
+                return arr;
+            }
+
+            var middle = Math.floor(arr.length / 2);
+            var left = arr.slice(0, middle);
+            var right = arr.slice(middle);
+
+            left = this.mergeSort(left);
+            right = this.mergeSort(right);
+
+            return this.merge(left, right);
+        },
+        merge(left, right) {
+            var result = [];
+            var leftIndex = 0;
+            var rightIndex = 0;
+
+            while (leftIndex < left.length && rightIndex < right.length) {
+                if (left[leftIndex] < right[rightIndex]) {
+                    result.push(left[leftIndex]);
+                    leftIndex++;
+                } else {
+                    result.push(right[rightIndex]);
+                    rightIndex++;
+                }
+            }
+
+            return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
         }
     }
 }
