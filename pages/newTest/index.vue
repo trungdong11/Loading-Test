@@ -72,7 +72,7 @@
                             <input type="text" v-model="password" class="input__value" placeholder="Enter password">
                         </div>
                         <div class="container__content__body__above__input__bottom">
-                            <input type="text" v-model="virtual_users" class="input__value" placeholder="ENTER THREAD QUANTITY">
+                            <input type="text" v-model="virtual_users" class="input__value" placeholder="ENTER VIRTUAL USER">
                             <div class="select-method">
                                 <div class="select-option" >
                                     <div class="select-option__body" @click="toggleDropdownMethod()">

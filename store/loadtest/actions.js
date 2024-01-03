@@ -21,7 +21,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
           }
@@ -51,7 +50,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
           }
@@ -76,7 +74,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
           }
