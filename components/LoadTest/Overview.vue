@@ -310,9 +310,9 @@ export default {
             const listLoadTime = this.mergeSort(listData)
             // console.log(listLoadTime, "listLoadTime")
 
-            const responseNinety = parseInt(listResponses.length * 90 / 100)
+            const responseNinety = parseFloat(listResponses.length * 90 / 100).toFixed(0)
             // console.log(responseNinety, "ninety")
-            const responseNinetyFive = parseInt(listResponses.length * 95 / 100)
+            const responseNinetyFive = parseFloat(listResponses.length * 95 / 100).toFixed(0)
             // console.log(responseNinetyFive,"nityfive")
             // console.log(responseNinety)
             this.avg.responseNinety = listLoadTime[responseNinety - 1]

@@ -244,8 +244,6 @@ export default {
             let sumError = 0
             let sumReponseTime = 0;
             let listData = []
-            let initLoadTimeMin = Infinity;
-            let initLoadTimeMax = 0;
             let totalSentData = 0
             let totalReceiveData = 0
             let totalStandard = 0
@@ -259,15 +257,6 @@ export default {
                 count++
                 sumReponseTime += parseInt(d.load_time) 
                 listData.push(parseInt(d.load_time))
-
-                if(parseInt(d.load_time) > initLoadTimeMax)
-                {
-                    this.avg.maxResponseTime = parseInt(d.load_time) 
-                }
-                if(parseInt() < initLoadTimeMin) 
-                {
-                    this.avg.minResponseTime = parseInt(d.load_time)
-                }
 
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
                     sumError++;
@@ -324,12 +313,18 @@ export default {
 
             // const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
             const listLoadTime = this.mergeSort(listData)
-            // console.log(listLoadTime)
-            const responseNinety = parseInt(listResponses.length * 90 / 100)
-            const responseNinetyFive = parseInt(listResponses.length * 95 / 100)
-            const responseFiveTy = parseInt(listResponses.length * 50 / 100)
-            const responseNineTyNine = parseInt(listResponses.length * 99 / 100)
-            // console.log(responseNinety)
+            this.avg.minResponseTime = listLoadTime[0]
+            this.avg.maxResponseTime = listLoadTime.slice(-1)[0]
+            console.log(listLoadTime)
+            const responseNinety = parseFloat(listResponses.length * 90 / 100).toFixed(0)
+            console.log(responseNinety)
+            const responseNinetyFive = parseFloat(listResponses.length * 95 / 100).toFixed(0)
+            console.log(responseNineTyNine)
+            const responseFiveTy = parseFloat(listResponses.length * 50 / 100).toFixed(0)
+            console.log(responseFiveTy)
+            const responseNineTyNine = parseFloat(listResponses.length * 99 / 100).toFixed(0)
+            console.log(responseNineTyNine)
+
             this.percenlite.NineTy = listLoadTime[responseNinety - 1]
             this.percenlite.NineTyFive = listLoadTime[responseNinetyFive -1 ]
             this.percenlite.FiveTy = listLoadTime[responseFiveTy - 1]

@@ -2,8 +2,6 @@ export const actions = {
     async fetchDataGet({ commit }, { method, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost }) {
       try {
         console.log("dong")
-        const starttime = new Date(performance.now())
-        console.log(starttime, "starttime")
         const newObject = {
           ...requestBody, 
           ...requestBodyPost
@@ -23,7 +21,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            const endTime = new Date(performance.now());
             console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
@@ -35,9 +32,6 @@ export const actions = {
     },
     async fetchDataPost({ commit }, {option_post, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost }) {
       try {
-        console.log("dong")
-        const starttime = new Date(performance.now())
-        console.log(starttime, "starttime")
         const newObject = {
           ...requestBody, 
           ...requestBodyPost
@@ -57,7 +51,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            const endTime = new Date(performance.now());
             console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
@@ -69,9 +62,6 @@ export const actions = {
     },
     async fetchDataJDBC({ commit }, {url, jdbc_driver_class, username, password, sql_statement, virtual_users, iterations, ramp_up, durations}) {
       try {
-        // console.log("dong")
-        const starttime = new Date(performance.now())
-        // console.log(starttime, "starttime")
         this.$axios({
           url: `http://36.50.134.89:8080/api/v1/jdbc-request/?database_url=${url}&jdbc_driver_class=${jdbc_driver_class}&username=${username}&password=${password}&sql_statement=${sql_statement}&virtual_users=${virtual_users}&iterations=${iterations}&ramp_up=${ramp_up}&duration=${durations}`,
           headers: {
@@ -86,7 +76,6 @@ export const actions = {
             const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
             const Arr = filteredArray.map(line => JSON.parse(line));
             console.log(Arr, "tết")
-            const endTime = new Date(performance.now());
             console.log(endTime, "endtime")
             commit('setApiData', Arr);
 
