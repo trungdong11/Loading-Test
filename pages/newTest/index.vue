@@ -256,10 +256,10 @@ export default {
             durations: 0,
             ramup: 0,
             numberMethod: 10,
-            jdbc_driver_class: '',
-            username: '',
-            password: '',
-            sql_statement: '',
+            jdbc_driver_class: 'com.mysql.cj.jdbc.Driver',
+            username: 'TrungHuy',
+            password: 'TrungHuy123()',
+            sql_statement: 'SELECT * FROM wordpress.wp_users;',
             
         }
     },
@@ -340,17 +340,17 @@ export default {
         }, 
         async methodGetData() {       
             const requestBody = {
-                key_headers: [""],
-                value_headers: [""]
-                // key_headers: this.keyValueList?.map(i => i.key),
-                // value_headers: this.keyValueList?.map(i => i.value)
+                // key_headers: [""],
+                // value_headers: [""]
+                key_headers: this.keyValueListGet.map(i => i.key),
+                value_headers: this.keyValueListGet.map(i => i.value)
             };
 
             const requestBodyPost = {
-                key_bodies: [""],
-                value_bodies: [""],
-                // key_bodies: this.keyValueListPost?.map(i => i.key),
-                // value_bodies: this.keyValueListPost?.map(i => i.value)
+                // key_bodies: [""],
+                // value_bodies: [""],
+                key_bodies: this.keyValueListPost?.map(i => i.key),
+                value_bodies: this.keyValueListPost?.map(i => i.value)
             }
 
             this.apiDataGet(
@@ -369,17 +369,17 @@ export default {
         async methodPostData() {
        
             const requestBody = {
-                key_headers: [""],
-                value_headers: [""]
+                // key_headers: this.keyValueListGet,
+                // value_headers: [""]
 
-                // key_headers: this.keyValueList?.map(i => i.key),
-                // value_headers: this.keyValueList?.map(i => i.value)
+                key_headers: this.keyValueListGet.map(i => i.key),
+                value_headers: this.keyValueListGet.map(i => i.value)
             }
             const requestBodyPost = {
-                key_bodies: [""],
-                value_bodies: [""],
-                // key_bodies: this.keyValueListPost?.map(i => i.key),
-                // value_bodies: this.keyValueListPost?.map(i => i.value)
+                // key_bodies: [""],
+                // value_bodies: [""],
+                key_bodies: this.keyValueListPost.map(i => i.key),
+                value_bodies: this.keyValueListPost.map(i => i.value)
             }
             this.apiDataPost(
                 {

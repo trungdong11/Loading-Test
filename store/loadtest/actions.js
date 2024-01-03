@@ -69,7 +69,7 @@ export const actions = {
     },
     async fetchDataJDBC({ commit }, {url, jdbc_driver_class, username, password, sql_statement, virtual_users, iterations, ramp_up, durations}) {
       try {
-        console.log("dong")
+        // console.log("dong")
         const starttime = new Date(performance.now())
         // console.log(starttime, "starttime")
         this.$axios({
