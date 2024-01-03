@@ -26,7 +26,7 @@
                 <div class="line"></div>
                 <span class="throughput">{{ avg.throughput }} <span class="item-size">request/s</span></span>
             </div>
-            <div class="container__first__item">
+            <div class="container__first__item" v-if="getData[0].data === undefined">
                 <div class="container__first__item__title">
                     <h3>Error</h3>
                     <p>error %</p>
@@ -35,6 +35,17 @@
                 <div class="container__first__item__body">
                     <span class="error">{{avg.errorNumber}} <span class="item-size">errors</span></span>
                     <span class="error">{{avg.errorPercent}} <span class="item-size">%</span></span>
+                </div>
+            </div>
+            <div class="container__first__item" v-if="getData[0].data !== undefined">
+                <div class="container__first__item__title">
+                    <h3>Error</h3>
+                    <p>error %</p>
+                </div>
+                <div class="line"></div>
+                <div class="container__first__item__body">
+                    <span class="error">{{avg.errorPercentJDBC}} <span class="item-size">errors</span></span>
+                    <span class="error">{{avg.errorNumberJDBC}} <span class="item-size">%</span></span>
                 </div>
             </div>
         </div>
@@ -80,7 +91,7 @@
                 </div>
             </div>
         </div> 
-        <div class="container__second">
+        <div class="container__second" v-if="getData[0].data === undefined">
             <div class="container__second__first bg-second">
                 <h3>Response Codes</h3>
                 <div class="line"></div>
@@ -163,6 +174,8 @@ export default {
                 errorNumber: 0,
                 errorPercent: 0,
                 throughput: 0,
+                errorPercentJDBC: 0,
+                errorNumberJDBC: 0
             },
             percenlite: {
                 FiveTy: 0, 
@@ -221,6 +234,7 @@ export default {
             if (newData.length > 0) {
                 console.log(this.getData, "dong dong")
                 this.handleRender(this.getData)
+                this.handleErrorJDBC(this.getData)
             }
         },
     },
@@ -244,7 +258,7 @@ export default {
             listResponses.forEach((d) => {
                 count++
                 sumReponseTime += parseInt(d.load_time) 
-                listData.push(d.load_time)
+                listData.push(parseInt(d.load_time))
 
                 if(parseInt(d.load_time) > initLoadTimeMax)
                 {
@@ -300,7 +314,7 @@ export default {
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
             // console.log(sumTime)
             
-            this.avg.throughput = parseInt((listResponses.length) / sumTime);
+            this.avg.throughput = parseFloat((listResponses.length) / sumTime).toFixed(1);
             // console.log(this.avg.throughput, "test time")
 
             // console.log(sumError, "numbererror")
@@ -308,7 +322,8 @@ export default {
             this.avg.errorPercent = parseInt((sumError * 100) / listResponses.length)
 
 
-            const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
+            // const listLoadTime = listData.sort((a, b) => parseInt(a.load_time) - parseInt(b.load_time));
+            const listLoadTime = this.mergeSort(listData)
             // console.log(listLoadTime)
             const responseNinety = parseInt(listResponses.length * 90 / 100)
             const responseNinetyFive = parseInt(listResponses.length * 95 / 100)
@@ -325,6 +340,50 @@ export default {
         handleChart() {
             this.chartData.datasets[0].data = []
             this.chartData.datasets[0].data.push(this.count.twoXX, this.count.threeXX, this.count.fourXX, this.count.fiveXX, this.count.otherXX)
+        },
+        handleErrorJDBC(listResponses) {
+            let sum = 0
+            if(this.getData[0].data !== undefined) {
+                listResponses.forEach((d) => {
+                    if(d.error_code !== '1') {
+                        sum++
+                    }
+                })
+
+                this.avg.errorNumberJDBC = sum
+                this.avg.errorPercentJDBC = parseInt((sum * this.getData.length) / 100)
+            }
+        },
+        mergeSort(arr) {
+            if (arr.length <= 1) {
+                return arr;
+            }
+
+            var middle = Math.floor(arr.length / 2);
+            var left = arr.slice(0, middle);
+            var right = arr.slice(middle);
+
+            left = this.mergeSort(left);
+            right = this.mergeSort(right);
+
+            return this.merge(left, right);
+        },
+        merge(left, right) {
+            var result = [];
+            var leftIndex = 0;
+            var rightIndex = 0;
+
+            while (leftIndex < left.length && rightIndex < right.length) {
+                if (left[leftIndex] < right[rightIndex]) {
+                    result.push(left[leftIndex]);
+                    leftIndex++;
+                } else {
+                    result.push(right[rightIndex]);
+                    rightIndex++;
+                }
+            }
+
+            return result.concat(left.slice(leftIndex)).concat(right.slice(rightIndex));
         }
     },
 }

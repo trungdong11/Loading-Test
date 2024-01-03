@@ -4,12 +4,12 @@
             <h2>RENDER INTERFACE</h2>
             <p>All labels requests executed during the test run.</p>
         </div>
-        <div class="container__body">
+        <div class="container__body" v-if="getData[0].data === undefined">
             <iframe width="100%" height="100vh" :srcdoc="listDatas[0]?.response_body"></iframe>
         </div>
-        <!-- <div class="container__body" v-if="listDatas[0]?.response_body === 'underfined'">
+        <div class="container__body" v-if="getData[0].data !== undefined">
             <vue-json-pretty :data="renderData" />
-        </div> -->
+        </div>
     </div>
 </template>
 
@@ -21,7 +21,6 @@ import 'vue-json-pretty/lib/styles.css';
 export default {
     data() {
         return {
-            listDatas: [],
             renderData: '',
         }
     },
@@ -36,15 +35,17 @@ export default {
     watch: {
         getData(newData, oldData) {
             if (newData.length > 0) {
-            // console.log(this.getData, "dong dong")
-                this.listDatas = this.getData
-                console.log(this.listDatas, "render")
-                
-                // this.dataRender = JSON.parse(JSON.stringify(this.listDatas[0]?.data))
+                this.renderJDBC(this.getData)
             }
         }
     },
-    
+    methods: {
+        renderJDBC(listResponses) {
+            if(this.getData[0].data !== undefined) {
+                this.dataRender = JSON.parse(JSON.stringify(listResponses[0]?.data))
+            }
+        }
+    }
 }
 </script>
 
