@@ -117,19 +117,21 @@ export default {
             listResponses.forEach((d) => {
                 console.log(d.response_code, "code")
                 count++
-                sumReponseTime += parseInt(d.load_time)
-                sumConnectTime += parseInt(d.connect_time)
-                sumLatency += parseInt(d.latency)
-                listData.push(parseInt(d.load_time))
-                listDataConnection.push(parseInt(d.connect_time))
-                listDataLatency.push(parseInt(d.latency))
+                if(d.load_time !== undefined) {
+                    sumReponseTime += parseInt(d.load_time)
+                    sumConnectTime += parseInt(d.connect_time)
+                    sumLatency += parseInt(d.latency)
+                    listData.push(parseInt(d.load_time))
+                    listDataConnection.push(parseInt(d.connect_time))
+                    listDataLatency.push(parseInt(d.latency))
 
-                if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
-                    sumError++;
+                    if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
+                        sumError++;
+                    }
+
+                    totalSentData += parseInt(d.data_sent)
+                    totalReceiveData += parseInt(d.data_received)
                 }
-
-                totalSentData += parseInt(d.data_sent)
-                totalReceiveData += parseInt(d.data_received)
             })
 
             const listConnection = this.mergeSort(listDataConnection)
@@ -152,11 +154,11 @@ export default {
             this.avg.latency =  parseInt(sumLatency / count)
             
 
-            let timeFirst = listResponses[0].start_at
+            let timeFirst = listResponses[0]?.start_at
             console.log(timeFirst)
-            let timeLast = listResponses.slice(-1)[0].start_at
+            let timeLast = listResponses.slice(-1)[0]?.start_at
             console.log(timeLast)
-            let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
+            let loadTimeLast = parseInt(listResponses.slice(-1)[0]?.load_time)
             console.log(loadTimeLast)
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
             console.log(sumTime)

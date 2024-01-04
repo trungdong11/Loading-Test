@@ -256,30 +256,33 @@ export default {
 
             listResponses.forEach((d) => {
                 count++
-                sumReponseTime += parseInt(d.load_time) 
-                listData.push(parseInt(d.load_time))
+                if(d.load_time !== undefined) {
+                    sumReponseTime += parseInt(d.load_time) 
+                    listData.push(parseInt(d.load_time))
 
-                if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
-                    sumError++;
+                    if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 600) {
+                        sumError++;
+                    }
+                    
+                    if( parseInt(d.response_code) >= 200 && parseInt(d.response_code) < 300) {
+                        countTwoXX++
+                    }
+                    if(parseInt(d.response_code) >= 300 && parseInt(d.response_code) < 400) {
+                        countThreeXX++
+                    }
+                    if(parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 500) {
+                        countFourXX++
+                    }
+                    if(parseInt(d.response_code) >= 500 && parseInt(d.response_code) < 600) {
+                        countFiveXX++
+                    }
+
+                    totalSentData += parseInt(d.data_sent)
+                    totalReceiveData += parseInt(d.data_received)
+
+                    totalStandard += Math.abs(this.avg.responseTime - parseInt(d.load_time))
                 }
                 
-                if( parseInt(d.response_code) >= 200 && parseInt(d.response_code) < 300) {
-                    countTwoXX++
-                }
-                if(parseInt(d.response_code) >= 300 && parseInt(d.response_code) < 400) {
-                    countThreeXX++
-                }
-                if(parseInt(d.response_code) >= 400 && parseInt(d.response_code) < 500) {
-                    countFourXX++
-                }
-                if(parseInt(d.response_code) >= 500 && parseInt(d.response_code) < 600) {
-                    countFiveXX++
-                }
-
-                totalSentData += parseInt(d.data_sent)
-                totalReceiveData += parseInt(d.data_received)
-
-                totalStandard += Math.abs(this.avg.responseTime - parseInt(d.load_time))
             })
 
             this.count.twoXX = countTwoXX
@@ -295,11 +298,11 @@ export default {
 
             this.total.standard = parseFloat(totalStandard / listResponses.length).toFixed(0)
 
-            let timeFirst = listResponses[0].start_at
+            let timeFirst = listResponses[0]?.start_at
             // console.log(timeFirst)
-            let timeLast = listResponses.slice(-1)[0].start_at
+            let timeLast = listResponses.slice(-1)[0]?.start_at
             // console.log(timeLast)
-            let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
+            let loadTimeLast = parseInt(listResponses.slice(-1)[0]?.load_time)
             // console.log(loadTimeLast)
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
             // console.log(sumTime)
@@ -364,7 +367,7 @@ export default {
 
             return this.merge(left, right);
         },
-        merge(left, right) {
+        merge(left, right) {    
             var result = [];
             var leftIndex = 0;
             var rightIndex = 0;
