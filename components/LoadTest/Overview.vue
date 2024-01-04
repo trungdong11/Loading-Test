@@ -259,7 +259,7 @@ export default {
                         yAxisID: 'y-axis-1'
                     },
                     {
-                        label: "Connect time",
+                        label: "Load time",
                         borderColor: "#FFCB77",
                         borderWidth: 1,
                         data: [5, 5, 5, 5,5, 5, 5, 5],
@@ -311,6 +311,10 @@ export default {
                       },
                       labels: {
                         show: true
+                      },
+                      title: {
+                        display: true,
+                        text: 'VirtualUser'
                       }
                     },
                     {
@@ -323,6 +327,10 @@ export default {
                       },
                       labels: {
                         show: true
+                      },
+                      title: {
+                        display: true,
+                        text: 'VirtualUser'
                       }
                     }
                 ]
@@ -370,22 +378,21 @@ export default {
             let listData = []
             
             listResponses.forEach((d) => {
-                if(d.load_time!== undefined) {
+                // if(d.load_time !== undefined) {
                     sumReponseTime += parseInt(d.load_time)
                     listData.push(parseInt(d.load_time))
-                }
+                // }
                 count++
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) <= 600) {
                     sumError++;
                 }
-
             })
             // console.log(count, "count")
             // console.log(listData, "listData")
             this.avg.responseTime =  parseInt(sumReponseTime / count)
             
-            const start = new Date(parseInt(listResponses[0]?.start_at)) 
-            const end = new Date(parseInt(listResponses.slice(-1)[0]?.start_at))
+            const start = new Date(parseInt(listResponses[0].start_at)) 
+            const end = new Date(parseInt(listResponses.slice(-1)[0].start_at))
 
             this.render.startTime = formatDate(start,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
             this.render.endTime = formatDate(end,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
@@ -404,9 +411,9 @@ export default {
             console.log(sumError, "numbererror")
             this.avg.errorNumber = parseInt((sumError * 100) / listResponses.length)
 
-            let timeFirst = listResponses[0]?.start_at
+            let timeFirst = listResponses[0].start_at
             // console.log(timeFirst)
-            let timeLast = listResponses.slice(-1)[0]?.start_at
+            let timeLast = listResponses.slice(-1)[0].start_at
             // console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             // console.log(loadTimeLast)
