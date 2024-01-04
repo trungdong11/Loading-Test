@@ -5,7 +5,7 @@
             <p>All labels requests executed during the test run.</p>
         </div>
         <div class="container__body" v-if="getData[0].data === undefined">
-            <!-- <iframe width="100%" height="100vh" :srcdoc="getData[0]?.response_body"></iframe> -->
+            <iframe width="100%" height="100vh" :srcdoc="getData[0]?.response_body"></iframe>
         </div>
         <div class="container__body" v-if="getData[0].data !== undefined">
             <vue-json-pretty :data="renderData" />
@@ -43,6 +43,7 @@ export default {
         renderJDBC(listResponses) {
             if(this.getData[0].data !== undefined) {
                 this.dataRender = JSON.parse(JSON.stringify(listResponses[0]?.data))
+                
             }
         }
     }

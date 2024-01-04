@@ -12,20 +12,16 @@ export const actions = {
           method: 'POST',
           onDownloadProgress: progressEvent => {
               const xhr = progressEvent?.target
+              console.log(xhr)
               const dataString = xhr.responseText.replace(/data:/g, '');
+              console.log(dataString)
               const lines = dataString.split('\n');
-              
+              console.log(lines)
               const filteredArray = lines.filter(obj => Object.keys(obj).length > 0);
-            try {
-              
+              console.log(filteredArray)
               const Arr = filteredArray.map(line => JSON.parse(line));
               console.log(Arr, "tết")
               commit('setApiData', Arr);
-            }catch (error) {
-              // console.log(error, "loi")
-              console.log(filteredArray, "line")
-            }
-            
 
           }
         }).then(({ data }) => Promise.resolve(data));
@@ -33,14 +29,14 @@ export const actions = {
         console.error('Error fetching data:', error);
       }
     },
-    async fetchDataPost({ commit }, {option_post, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost, keepAlive }) {
+    async fetchDataPost({ commit }, {option_post, virtual_users, iterations, url, ramp_up, durations, requestBody, requestBodyPost, keep_alive}) {
       try {
         const newObject = {
           ...requestBody, 
           ...requestBodyPost
-        }
+        } 
         this.$axios({
-          url: `http://36.50.134.89:8080/api/v1/http-methods/post/${option_post}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}&is_keep_alive=${keepAlive}`,
+          url: `http://36.50.134.89:8080/api/v1/http-methods/post/${option_post}?virtual_users=${virtual_users}&iterations=${iterations}&url=${url}&ramp_up=${ramp_up}&durations=${durations}&is_keep_alive=${keep_alive}`,
           data: newObject,
           headers: {
             'accept': '*',
@@ -70,10 +66,7 @@ export const actions = {
       try {
         this.$axios({
           url: `http://36.50.134.89:8080/api/v1/jdbc-request/?database_url=${url}&jdbc_driver_class=${jdbc_driver_class}&username=${username}&password=${password}&sql_statement=${sql_statement}&virtual_users=${virtual_users}&iterations=${iterations}&ramp_up=${ramp_up}&duration=${durations}`,
-          headers: {
-            'accept': '*',
-            'content-type': 'application/json'  
-          },
+
           method: 'GET',
           onDownloadProgress: progressEvent => {
             const xhr = progressEvent?.target

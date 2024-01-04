@@ -35,7 +35,7 @@
                     <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                     <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                     <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
-                    <p><span>Start at:  </span>{{ new Date(selectedJson?.start_at) }}</p>
+                    <p><span>Start at:  </span>{{ new Date(parseInt(selectedJson?.start_at)) }}</p>
                     <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                     <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                     <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>
@@ -54,7 +54,7 @@
                   <p><span>Content Type:  </span>{{ selectedJson.content_type }}</p>
                   <p><span>Thread Name:  </span>{{ selectedJson.thread_name }}</p>
                   <p><span>Iterations:  </span>{{ selectedJson.iterations }}</p>
-                  <p><span>Start at:  </span>{{ new Date(selectedJson?.start_at) }}</p>
+                  <p><span>Start at:  </span>{{ new Date(parseInt(selectedJson?.start_at)) }}</p>
                   <p><span>Load time: </span>{{ selectedJson.load_time }} ms</p>
                   <p><span>Connect time:  </span>{{ selectedJson.connect_time }} ms</p>
                   <p><span>Latency:  </span>{{ selectedJson.latency }} ms</p>

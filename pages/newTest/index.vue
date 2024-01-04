@@ -261,7 +261,7 @@ export default {
             virtual_users: "",
             durations: 0,
             ramup: 0,
-            numberMethod: 10,
+            numberMethod: 1,
             jdbc_driver_class: 'com.mysql.cj.jdbc.Driver',
             username: 'TrungHuy',
             password: 'TrungHuy123()',
@@ -343,7 +343,6 @@ export default {
                 listValue.splice(index, 1);
                 countlist--
             }
-            console.log(this.checkKeepAlive, "keepalive")
         }, 
         async methodGetData() {       
             const requestBody = {
@@ -377,15 +376,10 @@ export default {
         async methodPostData() {
        
             const requestBody = {
-                // key_headers: this.keyValueListGet,
-                // value_headers: [""]
-
                 key_headers: this.keyValueListGet.map(i => i.key),
                 value_headers: this.keyValueListGet.map(i => i.value)
             }
             const requestBodyPost = {
-                // key_bodies: [""],
-                // value_bodies: [""],
                 key_bodies: this.keyValueListPost.map(i => i.key),
                 value_bodies: this.keyValueListPost.map(i => i.value)
             }
@@ -395,11 +389,11 @@ export default {
                     virtual_users: this.virtual_users, 
                     iterations: this.iterationValue, 
                     url:this.urlValue, 
-                    ramp_up:    this.ramup, 
+                    ramp_up:this.ramup, 
                     durations: this.durations,
                     requestBody: requestBody,
                     requestBodyPost: requestBodyPost,
-                    KeepAlive: this.checkKeepAlive
+                    keep_alive: this.checkKeepAlive
                 }
             );
         },
@@ -699,8 +693,8 @@ export default {
     }
     label {
         font-size: 16px;
-        color: var(--neutral-500);
-        font-weight: 600;
+        color: var(--neutral-400);
+        font-weight: 500;
         
     }
 

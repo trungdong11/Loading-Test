@@ -370,11 +370,11 @@ export default {
             let listData = []
             
             listResponses.forEach((d) => {
-                console.log(d.response_code, "code")
+                if(d.load_time!== undefined) {
+                    sumReponseTime += parseInt(d.load_time)
+                    listData.push(parseInt(d.load_time))
+                }
                 count++
-                sumReponseTime += parseInt(d.load_time)
-                listData.push(parseInt(d.load_time))
-
                 if (parseInt(d.response_code) >= 400 && parseInt(d.response_code) <= 600) {
                     sumError++;
                 }
@@ -384,8 +384,8 @@ export default {
             // console.log(listData, "listData")
             this.avg.responseTime =  parseInt(sumReponseTime / count)
             
-            const start = new Date(parseInt(listResponses[0].start_at)) 
-            const end = new Date(parseInt(listResponses.slice(-1)[0].start_at))
+            const start = new Date(parseInt(listResponses[0]?.start_at)) 
+            const end = new Date(parseInt(listResponses.slice(-1)[0]?.start_at))
 
             this.render.startTime = formatDate(start,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
             this.render.endTime = formatDate(end,' #{F} #{j}, #{Y} at #{g}:#{i}:#{s}')
@@ -404,9 +404,9 @@ export default {
             console.log(sumError, "numbererror")
             this.avg.errorNumber = parseInt((sumError * 100) / listResponses.length)
 
-            let timeFirst = listResponses[0].start_at
+            let timeFirst = listResponses[0]?.start_at
             // console.log(timeFirst)
-            let timeLast = listResponses.slice(-1)[0].start_at
+            let timeLast = listResponses.slice(-1)[0]?.start_at
             // console.log(timeLast)
             let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             // console.log(loadTimeLast)
@@ -418,16 +418,16 @@ export default {
         },  
         handleResponse(listResponses) {
             listResponses.some((item) => {
-                if(item?.response_code === "200") {
+                if(parseInt(item?.response_code) >= 200 && parseInt(item?.response_code) < 300) {
                     this.check.responseTwo = true
                 }
-                if(item?.response_code === "300") {
+                if(parseInt(item?.response_code) >= 300 && parseInt(item?.response_code) < 400) {
                     this.check.responseThree = true
                 }
-                if(item?.response_code === "400") {
+                if(parseInt(item?.response_code) >= 400 && parseInt(item?.response_code) < 500) {
                     this.check.responseFour = true
                 }
-                if(item?.response_code === "500") {
+                if(parseInt(item?.response_code) >= 500 && parseInt(item?.response_code) < 600) {
                     this.check.responseFive = true
                 }
             })
@@ -439,10 +439,12 @@ export default {
             this.chartData.datasets[2].data = []    
             
             listResponses.forEach((d) => {
-                this.chartData.datasets[0].data.push( parseInt(d.load_time))
-                this.chartData.datasets[1].data.push(parseInt(d.connect_time))
-                this.chartData.datasets[2].data.push(parseInt(d.latency))
-                this.chartData.labels.push(d.thread_name)
+                if(d.load_time !== undefined) {
+                    this.chartData.datasets[0].data.push( parseInt(d.load_time))
+                    this.chartData.datasets[1].data.push(parseInt(d.connect_time))
+                    this.chartData.datasets[2].data.push(parseInt(d.latency))
+                    this.chartData.labels.push(d.thread_name)
+                }
             })
             
             // console.log(this.chartData.labels, "dong11")
@@ -523,15 +525,18 @@ export default {
             let listLoadTime = []
 
             arr.forEach((d) => {
-                const key = formatDate((new Date(parseInt(d.start_at))), '#{g}:#{i}:#{s}');
+                if(d.load_time !== undefined) {
+                    const key = formatDate((new Date(parseInt(d.start_at))), '#{g}:#{i}:#{s}');
                 
-                if (!data.has(key)) {
-                    data.set(key, [parseInt(d.load_time)]);
-                } else {
-                    let array = data.get(key);
-                    array.push(parseInt(d.load_time));
-                    data.set(key, array);
+                    if (!data.has(key)) {
+                        data.set(key, [parseInt(d.load_time)]);
+                    } else {
+                        let array = data.get(key);
+                        array.push(parseInt(d.load_time));
+                        data.set(key, array);
+                    }
                 }
+                
             });
 
             console.log(data, "map");
