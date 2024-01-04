@@ -17,11 +17,11 @@
 import { mapActions, mapGetters } from 'vuex'
 import VueJsonPretty from 'vue-json-pretty';
 import 'vue-json-pretty/lib/styles.css';
-
+ 
 export default {
     data() {
         return {
-            renderData: '',
+            renderData: [],
         }
     },
     components: {
@@ -42,8 +42,7 @@ export default {
     methods: {
         renderJDBC(listResponses) {
             if(this.getData[0].data !== undefined) {
-                this.dataRender = JSON.parse(JSON.stringify(listResponses[0]?.data))
-                
+                this.renderData = JSON.parse(JSON.stringify(listResponses[0]?.data))
             }
         }
     }

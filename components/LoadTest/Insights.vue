@@ -256,7 +256,7 @@ export default {
 
             listResponses.forEach((d) => {
                 count++
-                if(d.load_time !== undefined) {
+                // if(d.load_time !== undefined) {
                     sumReponseTime += parseInt(d.load_time) 
                     listData.push(parseInt(d.load_time))
 
@@ -281,7 +281,7 @@ export default {
                     totalReceiveData += parseInt(d.data_received)
 
                     totalStandard += Math.abs(this.avg.responseTime - parseInt(d.load_time))
-                }
+                // }
                 
             })
 
@@ -298,11 +298,11 @@ export default {
 
             this.total.standard = parseFloat(totalStandard / listResponses.length).toFixed(0)
 
-            let timeFirst = listResponses[0]?.start_at
+            let timeFirst = listResponses[0].start_at
             // console.log(timeFirst)
-            let timeLast = listResponses.slice(-1)[0]?.start_at
+            let timeLast = listResponses.slice(-1)[0].start_at
             // console.log(timeLast)
-            let loadTimeLast = parseInt(listResponses.slice(-1)[0]?.load_time)
+            let loadTimeLast = parseInt(listResponses.slice(-1)[0].load_time)
             // console.log(loadTimeLast)
             let sumTime = ((timeLast-timeFirst) + loadTimeLast)/1000
             // console.log(sumTime)
